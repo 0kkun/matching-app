@@ -2,11 +2,10 @@
     <div class="card">
         <ul>
             <li class="side-bar-btn"><RouterLink to="/home">Search</RouterLink></li>
-            <li class="side-bar-btn">Comunity</li>
-            <li class="side-bar-btn">Like</li>
-            <li class="side-bar-btn">Message</li>
+            <li class="side-bar-btn"><RouterLink to="/home/community">Community</RouterLink></li>
+            <li class="side-bar-btn"><RouterLink to="/home/like">Like</RouterLink></li>
+            <li class="side-bar-btn"><RouterLink to="/home/message">Message</RouterLink></li>
             <li class="side-bar-btn"><RouterLink to="/home/profile">Profile</RouterLink></li>
-            <li class="side-bar-btn">Etc</li>
         </ul>
     </div>
 </template>
