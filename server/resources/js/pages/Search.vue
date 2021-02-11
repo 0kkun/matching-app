@@ -1,9 +1,8 @@
 <template>
     <div class="container">
         <div class="row">
-
             <div class="col-sm-3 pt-3">
-                    <SideBar />
+                <SideBar />
             </div>
 
             <div class="col-sm-9">
@@ -17,8 +16,53 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <img class="card-img-top" src="images/cat1.jpeg">
+                            <div class="card-body d-flex justify-content-between">
+                                <div>
+                                    <div>佐藤</div>
+                                    <p>初めまして</p>
+                                </div>
+                                <div>
+                                    <a href="#" class="btn btn-primary"><i class="fas fa-thumbs-up"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <img class="card-img-top" src="images/cat1.jpeg">
+                            <div class="card-body d-flex justify-content-between">
+                                <div>
+                                    <div>佐藤</div>
+                                    <p>初めまして</p>
+                                </div>
+                                <div>
+                                    <a href="#" class="btn btn-primary"><i class="fas fa-thumbs-up"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <img class="card-img-top" src="images/cat1.jpeg">
+                            <div class="card-body d-flex justify-content-between">
+                                <div>
+                                    <div>佐藤</div>
+                                    <p>初めまして</p>
+                                </div>
+                                <div>
+                                    <a href="#" class="btn btn-primary"><i class="fas fa-thumbs-up"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </template>
