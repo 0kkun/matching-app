@@ -3,6 +3,7 @@ import Router from 'vue-router';
 
 import SystemError from './pages/errors/System.vue'
 import Search from './pages/Search.vue'
+import Profile from './pages/Profile.vue'
 
 Vue.use(Router);
 
@@ -13,6 +14,11 @@ export default new Router({
             path: '/home',
             name: 'Search',
             component: Search
+        },
+        {
+            path: '/home/profile',
+            name: 'Profile',
+            component: Profile
         },
         {
             path: '/home/500',
