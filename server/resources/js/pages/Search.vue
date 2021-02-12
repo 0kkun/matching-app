@@ -20,7 +20,7 @@
                 <div class="row">
                     <div class="col-lg-4">
                         <div class="card">
-                            <img class="card-img-top" src="images/cat1.jpeg">
+                            <img class="card-img-top" src="/images/cat1.jpeg">
                             <div class="card-body d-flex justify-content-between">
                                 <div>
                                     <div>佐藤</div>
