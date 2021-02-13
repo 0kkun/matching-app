@@ -8,8 +8,8 @@ use Faker\Generator as Faker;
 
 $factory->define(Profile::class, function (Faker $faker) {
     return [
-        'user_id' => $faker->unique()->randumNumber(3), // 3桁のランダム数値
-        'tweet' => $faker->realText(50),
+        'user_id' => $faker->unique()->numberBetween($min=1, $max=10000),
+        'tweet' => $faker->realText(10),
         'introduction' => $faker->realText($maxNbChars = 100,$indexSize = 3),
         'hobby' => $faker->text(10),
         'blood_type' => 'B',
