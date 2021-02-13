@@ -18,6 +18,9 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->integer('prefecture_id')->length(2)->comment('都道府県ID');
+            $table->date('birthday')->comment('誕生日');
+            $table->integer('sex')->length(2)->comment('性別 1:男,2:女');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
