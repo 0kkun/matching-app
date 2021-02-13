@@ -11,13 +11,31 @@
                     <div class="card mt-3">
                         <img class="mx-auto mt-3" style="width:500px; height:350px" src="/images/cat1.jpeg">
                         <div class="h3 text-center pt-2">{{ profile.name }}</div>
-                        <div class="h4 text-center pt-2">一言 : 今日もいい天気</div>
-                        <div class="h4 text-center text-primary">--自己紹介--</div>
+                    </div>
+                    <div class="card mt-2 p-3">
+                        <div class="h5 text-center pt-2">初めまして！</div>
+                    </div>
+                    <div class="card mt-2 p-3">
+                        <div class="h5 font-weight-bold text-center">自己紹介</div>
                         <div class="h5 text-center p-3 ml-3 mr-3 bg-light">どうもです。テニス仲間募集中</div>
-                        <div class="h5 text-center">年齢 : {{ profile.age }}</div>
-                        <div class="h5 text-center">趣味 : 野球</div>
-                        <div class="h5 text-center">住所 : {{ profile.pref }}</div>
-                        <button @click="isShowEdit=true" class="btn btn-danger m-2">編集する</button>
+                    </div>
+                        
+                    <div class="card mt-2 p-3">
+                        <div class="row">
+                            <div class="col-6 h5 font-weight-bold text-right">
+                                <div>年齢：</div>
+                                <div class="pt-2">趣味：</div>
+                                <div class="pt-2">住所：</div>
+                            </div>
+                            <div class="col-6 h5">
+                                <div>{{ profile.age }}</div>
+                                <div class="pt-2">野球</div>
+                                <div class="pt-2">{{ profile.pref }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center m-2">
+                        <button @click="isShowEdit=true" class="btn btn-danger w-100">編集する</button>
                     </div>
                 </div>
                 <div v-if="isShowEdit">
