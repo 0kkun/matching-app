@@ -22,3 +22,13 @@ Route::get('/home', 'HomeController@index')->name('home.index');
 Route::get('/home/{any?}', function() {
     return view('home.index');
 })->where('any', '.*');
+
+// *******************
+// *** API用のルート ***
+// *******************
+Route::middleware('throttle:60,1', 'auth:web')->prefix('/api/v1')->group(function () {
+    // プロフィール関連のAPI
+    Route::prefix('/profile')->name('profile.')->group(function () {
+        Route::get('/login_user', 'ProfileController@getLoginUserProfile')->name('get_login_user');
+    });
+}); 
