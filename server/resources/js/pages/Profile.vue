@@ -86,7 +86,6 @@
                             <div class="text-center mt-3">
                                 <button @click.prevent="updateProfile()" type="submit" class="btn btn-success m-2">保存</button>
                                 <button @click.prevent="cancel()" class="btn btn-danger m-2">キャンセル</button>
-                                <!-- <button @click="isShowEdit=false" class="btn btn-danger m-2">キャンセル</button> -->
                             </div>
 
                         </form>
