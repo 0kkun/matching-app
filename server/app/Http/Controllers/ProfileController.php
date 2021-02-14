@@ -30,7 +30,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * ログインユーザーのプロフィール情報を取得する
+     * ログインユーザーのプロフィール情報を取得するAPI
      * 
      * /api/v1/profile/login_user
      *
@@ -64,11 +64,54 @@ class ProfileController extends Controller
             ];
 
             Log::info("[ END ] " . __FUNCTION__ . ", STATUS:" . $status);
+
         } catch (\Exception $e) {
             Log::info("[Exception]" . __FUNCTION__ . $e->getMessage());
             $response = ['message' => 'server error'];
         }
 
+        return response()->json($response);
+    }
+
+
+    /**
+     * プロフィール更新API
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        try {
+            Log::info("[START] " . __FUNCTION__ );
+
+            $status = 200;
+
+            $login_user = Auth::user();
+
+            $inputs = $request->all();
+
+            $profile_inputs = $inputs['profile'];
+
+            Log::info("request_params:" . $profile_inputs['tweet']);
+            Log::info("request_params:" . $profile_inputs['introduction']);
+            Log::info("request_params:" . $profile_inputs['hobby']);
+            Log::info("request_params:" . $profile_inputs['job']);
+
+            $this->profile_repository->updateProfile($login_user->id, $profile_inputs);
+
+            $response = [
+                'status'  => $status,
+                'message' => '',
+                'data'    => '',
+            ];
+
+            Log::info("[ END ] " . __FUNCTION__ . ", STATUS:" . $status);
+
+        } catch (\Exception $e) {
+            Log::info("[Exception]" . __FUNCTION__ . $e->getMessage());
+            $response = ['message' => 'server error'];
+        }
         return response()->json($response);
     }
 
