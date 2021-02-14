@@ -10,14 +10,14 @@
                 <div v-if="!isShowEdit">
                     <div class="card mt-3">
                         <img class="mx-auto mt-3" style="width:500px; height:350px" src="/images/cat1.jpeg">
-                        <div class="h3 text-center pt-2">{{ profile.name }}</div>
+                        <div class="h3 text-center pt-2">{{ user.name }}</div>
                     </div>
                     <div class="card mt-2 p-3">
-                        <div class="h5 text-center pt-2">初めまして！</div>
+                        <div class="h5 text-center pt-2">{{ profile.tweet }}</div>
                     </div>
                     <div class="card mt-2 p-3">
                         <div class="h5 font-weight-bold text-center">自己紹介</div>
-                        <div class="h5 text-center p-3 ml-3 mr-3 bg-light">どうもです。テニス仲間募集中</div>
+                        <div class="h5 text-center p-3 ml-3 mr-3 bg-light">{{ profile.introduction }}</div>
                     </div>
                         
                     <div class="card mt-2 p-3">
@@ -26,11 +26,15 @@
                                 <div>年齢：</div>
                                 <div class="pt-2">趣味：</div>
                                 <div class="pt-2">住所：</div>
+                                <div class="pt-2">仕事：</div>
+                                <div class="pt-2">性別：</div>
                             </div>
                             <div class="col-6 h5">
-                                <div>{{ profile.age }}</div>
-                                <div class="pt-2">野球</div>
-                                <div class="pt-2">{{ profile.pref }}</div>
+                                <div>{{ user.age }}</div>
+                                <div class="pt-2">{{ profile.hobby }}</div>
+                                <div class="pt-2">{{ user.pref }}</div>
+                                <div class="pt-2">{{ profile.job }}</div>
+                                <div class="pt-2">{{ user.sex == 1 ? '男' : '女'}}</div>
                             </div>
                         </div>
                     </div>
@@ -60,12 +64,18 @@
                                     <div for="tweet" class="h5 pt-2 mt-3">一言：</div>
                                     <div for="introduction" class="h5 pt-2 mt-3">自己紹介：</div>
                                     <div for="hobby" class="h5 mt-3 hobby-title">趣味：</div>
+                                    <div for="hobby" class="h5 mt-3 pt-2 mt-3">住所：</div>
+                                    <div for="hobby" class="h5 mt-3 pt-2 mt-3">仕事：</div>
                                 </div>
                                 <div class="col-9">
-                                    <input type="text" name="name" class="form-control w-50 mt-2" :value="profile.name">
-                                    <input type="text" name="tweet" class="form-control w-50 mt-2">
-                                    <textarea type="text" name="introduction" class="form-control mt-2" style="height:200px;"></textarea>
-                                    <input type="text" name="tweet" class="form-control w-50 mt-2">
+                                    <input type="text" name="name" class="form-control w-50 mt-2" :value="user.name">
+                                    <input type="text" name="tweet" class="form-control w-50 mt-2" :value="profile.tweet">
+                                    <textarea type="text" name="introduction" class="form-control mt-2" style="height:200px;" :value="profile.introduction"></textarea>
+                                    <input type="text" name="tweet" class="form-control w-50 mt-2" :value="profile.hobby">
+                                    <select class="form-control w-50 mt-2" name="prefecture_id" v-model="user.prefecture_id" options="prefLists">
+                                        <option v-for="(pref, index) in prefLists" :key="pref.id" :value="index">{{ pref }}</option>
+                                    </select>
+                                    <input type="text" name="job" class="form-control w-50 mt-2" :value="profile.job">
                                 </div>
                             </div>
 
@@ -93,7 +103,9 @@ export default {
     data() {
         return {
             loadStatus: false,
+            user: [],
             profile: [],
+            prefLists: [],
             isShowEdit: false,
             url:""
         }
@@ -105,10 +117,12 @@ export default {
         getLoginUserProfile: function() {
             axios.get('/api/v1/profile/login_user')
             .then((response) => {
-                this.profile = response.data.data;
-                // this.loadStatus = true;
+                this.user = response.data.data.login_user;
+                this.profile = response.data.data.profile[0];
+                this.prefLists = response.data.data.pref_lists;
+                this.loadStatus = true;
                 console.log('status:' + response.data.status);
-                console.log(response.data.data);
+                console.log(this.prefLists);
             })
             .catch((error) => {
                 console.log(error);
