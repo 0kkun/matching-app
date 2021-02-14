@@ -8,7 +8,16 @@ class Profile extends Model
 {
     protected $table = 'profiles';
 
-    protected $guarded = array('id');
+    // protected $guarded = array('id');
+
+    protected $fillable = [
+        'tweet',
+        'introduction',
+        'hobby',
+        'blood_type',
+        'job',
+        'updated_at'
+    ];
 
     public $timestamps = true;
 
