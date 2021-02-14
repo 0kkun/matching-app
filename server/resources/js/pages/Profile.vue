@@ -10,10 +10,10 @@
                 <div v-if="!isShowEdit">
                     <div class="card mt-3">
                         <div v-if="profile.image_name" class="text-center">
-                            <img class="mt-3 preview-image" :src="'/images/' + profile.image_name">
+                            <img class="mt-3 preview-image" :src="'/images/uploads/' + profile.image_name">
                         </div>
                         <div v-else class="text-center">
-                            <img class="mt-3 preview-image" :src="'/images/no_image.png'">
+                            <img class="mt-3 preview-image" :src="'/images/default/no_image.png'">
                         </div>
                         <div class="h3 text-center pt-2">{{ user.name }}</div>
                     </div>

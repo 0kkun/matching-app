@@ -138,7 +138,7 @@ class ProfileController extends Controller
             // 画像保存処理
             if ( !empty($file) ) {
                 $file_name = $file->getClientOriginalName();
-                $target_path = public_path('/images/');
+                $target_path = public_path('/images/uploads/');
                 $file->move($target_path, $file_name);
             } else {
                 $status = 204;
