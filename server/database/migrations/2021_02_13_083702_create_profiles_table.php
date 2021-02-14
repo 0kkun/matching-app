@@ -21,6 +21,7 @@ class CreateProfilesTable extends Migration
             $table->string('hobby', 100)->nullable()->default(null)->comment('趣味');
             $table->string('blood_type', 10)->nullable()->default(null)->comment('血液型');
             $table->string('job', 100)->nullable()->default(null)->comment('仕事');
+            $table->string('image_name')->nullable()->default(null)->comment('画像ファイル名');
             $table->timestamps();
 
             $table->foreign('user_id')
