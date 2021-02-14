@@ -68,6 +68,7 @@
                                     <div for="hobby" class="h5 mt-3 hobby-title">趣味：</div>
                                     <div for="hobby" class="h5 mt-3 pt-2 mt-3">住所：</div>
                                     <div for="hobby" class="h5 mt-3 pt-2 mt-3">仕事：</div>
+                                    <div for="hobby" class="h5 mt-3 pt-2 mt-3">血液型：</div>
                                 </div>
                                 <div class="col-9">
                                     <input type="text" class="form-control w-50 mt-2" v-model="user.name">
@@ -84,7 +85,8 @@
 
                             <div class="text-center mt-3">
                                 <button @click.prevent="updateProfile()" type="submit" class="btn btn-success m-2">保存</button>
-                                <button @click="isShowEdit=false" class="btn btn-danger m-2">キャンセル</button>
+                                <button @click.prevent="cancel()" class="btn btn-danger m-2">キャンセル</button>
+                                <!-- <button @click="isShowEdit=false" class="btn btn-danger m-2">キャンセル</button> -->
                             </div>
 
                         </form>
@@ -110,7 +112,7 @@ export default {
             profile: [],
             prefLists: [],
             isShowEdit: false,
-            url:""
+            url: ""
         }
     },
     mounted: function() {
@@ -133,7 +135,12 @@ export default {
             // refを設定した要素の情報を取得できる
             const file = this.$refs.preview.files[0];
             // ブラウザ上の一時的な置き場に画像を配置しURLを生成する
-            this.url = URL.createObjectURL(file)
+            this.url = URL.createObjectURL(file);
+            this.$refs.preview.value = "";
+        },
+        cancel() {
+            this.isShowEdit = false;
+            this.url = '';
         },
         updateProfile() {
             axios.post('/api/v1/profile/update', {
