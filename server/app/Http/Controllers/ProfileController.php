@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\Contracts\UserRepository;
+use App\Repositories\Contracts\ProfileRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 class ProfileController extends Controller
 {
     private $pref_lists;
+    private $profile_repository;
 
     /**
      * Constructor
@@ -19,13 +21,17 @@ class ProfileController extends Controller
      * @param UserRepository $user_repository
      */
     public function __construct(
+        ProfileRepository $profile_repository
     )
     {
         $this->pref_lists = config('pref');
+        $this->profile_repository = $profile_repository;
     }
 
     /**
      * ログインユーザーのプロフィール情報を取得する
+     * 
+     * /api/v1/profile/login_user
      *
      * @return JsonResponse
      */
@@ -43,12 +49,29 @@ class ProfileController extends Controller
             // 誕生日から逆算して年齢を追加
             $login_user->age = $this->calcAge($login_user->birthday);
 
-            $response = [
-                'status' => $status,
-                'message' => '',
-                'data' => $login_user,
+            $is_exists_profile = $this->profile_repository->isExistsProfile($login_user->id);
+
+            // プロフィール取得 or 作成取得
+            if ($is_exists_profile) {
+                $profile = $this->profile_repository->getProfile($login_user->id);
+            } else {
+                $this->profile_repository->createDefaultProfile($login_user->id);
+                $profile = $this->profile_repository->getProfile($login_user->id);
+            }
+
+            $pref_lists = config('pref');
+
+            $data = [
+                'login_user' => $login_user,
+                'profile'    => $profile,
+                'pref_lists' => $pref_lists
             ];
 
+            $response = [
+                'status'  => $status,
+                'message' => '',
+                'data'    => $data,
+            ];
 
             Log::info("[ END ] " . __FUNCTION__ . ", STATUS:" . $status);
         } catch (\Exception $e) {
