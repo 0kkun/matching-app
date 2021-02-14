@@ -30,5 +30,6 @@ Route::middleware('throttle:60,1', 'auth:web')->prefix('/api/v1')->group(functio
     // プロフィール関連のAPI
     Route::prefix('/profile')->name('profile.')->group(function () {
         Route::get('/login_user', 'ProfileController@getLoginUserProfile')->name('get_login_user');
+        Route::post('/update', 'ProfileController@updateProfile')->name('update');
     });
 }); 
