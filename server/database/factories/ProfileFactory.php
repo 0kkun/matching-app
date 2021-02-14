@@ -13,6 +13,7 @@ $factory->define(Profile::class, function (Faker $faker) {
         'introduction' => $faker->realText($maxNbChars = 100,$indexSize = 3),
         'hobby' => $faker->text(10),
         'blood_type' => 'B',
-        'job' => $faker->jobTitle()
+        'job' => $faker->jobTitle(),
+        'image_name' => 'no_image.png'
     ];
 });
