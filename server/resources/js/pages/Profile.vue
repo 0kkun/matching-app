@@ -28,6 +28,7 @@
                                 <div class="pt-2">住所：</div>
                                 <div class="pt-2">仕事：</div>
                                 <div class="pt-2">性別：</div>
+                                <div class="pt-2">血液型：</div>
                             </div>
                             <div class="col-6 h5">
                                 <div>{{ user.age }}</div>
@@ -35,6 +36,7 @@
                                 <div class="pt-2">{{ user.pref }}</div>
                                 <div class="pt-2">{{ profile.job }}</div>
                                 <div class="pt-2">{{ user.sex == 1 ? '男' : '女'}}</div>
+                                <div class="pt-2">{{ profile.blood_type }}</div>
                             </div>
                         </div>
                     </div>
@@ -68,19 +70,20 @@
                                     <div for="hobby" class="h5 mt-3 pt-2 mt-3">仕事：</div>
                                 </div>
                                 <div class="col-9">
-                                    <input type="text" name="name" class="form-control w-50 mt-2" :value="user.name">
-                                    <input type="text" name="tweet" class="form-control w-50 mt-2" :value="profile.tweet">
-                                    <textarea type="text" name="introduction" class="form-control mt-2" style="height:200px;" :value="profile.introduction"></textarea>
-                                    <input type="text" name="tweet" class="form-control w-50 mt-2" :value="profile.hobby">
+                                    <input type="text" class="form-control w-50 mt-2" v-model="user.name">
+                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.tweet">
+                                    <textarea type="text" class="form-control mt-2" style="height:200px;" v-model="profile.introduction"></textarea>
+                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.hobby">
                                     <select class="form-control w-50 mt-2" name="prefecture_id" v-model="user.prefecture_id" options="prefLists">
                                         <option v-for="(pref, index) in prefLists" :key="pref.id" :value="index">{{ pref }}</option>
                                     </select>
-                                    <input type="text" name="job" class="form-control w-50 mt-2" :value="profile.job">
+                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.job">
+                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.blood_type">
                                 </div>
                             </div>
 
                             <div class="text-center mt-3">
-                                <button type="submit" class="btn btn-success m-2">保存</button>
+                                <button @click.prevent="updateProfile()" type="submit" class="btn btn-success m-2">保存</button>
                                 <button @click="isShowEdit=false" class="btn btn-danger m-2">キャンセル</button>
                             </div>
 
@@ -114,26 +117,46 @@ export default {
         this.getLoginUserProfile();
     },
     methods: {
-        getLoginUserProfile: function() {
+        getLoginUserProfile() {
             axios.get('/api/v1/profile/login_user')
             .then((response) => {
                 this.user = response.data.data.login_user;
                 this.profile = response.data.data.profile[0];
                 this.prefLists = response.data.data.pref_lists;
                 this.loadStatus = true;
-                console.log('status:' + response.data.status);
-                console.log(this.prefLists);
             })
             .catch((error) => {
                 console.log(error);
             });
         },
-        uploadFile(){
+        uploadFile() {
             // refを設定した要素の情報を取得できる
             const file = this.$refs.preview.files[0];
             // ブラウザ上の一時的な置き場に画像を配置しURLを生成する
             this.url = URL.createObjectURL(file)
-        }
+        },
+        updateProfile() {
+            axios.post('/api/v1/profile/update', {
+                user: {
+                    name: this.user.name,
+                    prefecture_id: this.user.prefecture_id,
+                },
+                profile: {
+                    tweet: this.profile.tweet,
+                    introduction: this.profile.introduction,
+                    hobby: this.profile.hobby,
+                    job: this.profile.job
+                }
+            })
+            .then((response) => {
+                this.getLoginUserProfile();
+                this.isShowEdit = false;
+                console.log('update success!');
+            })
+            .catch((error) => {
+                console.log(error); 
+            });
+        },
     }
 }
 </script>
