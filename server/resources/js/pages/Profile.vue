@@ -145,7 +145,8 @@ export default {
                     tweet: this.profile.tweet,
                     introduction: this.profile.introduction,
                     hobby: this.profile.hobby,
-                    job: this.profile.job
+                    job: this.profile.job,
+                    blood_type: this.profile.blood_type
                 }
             })
             .then((response) => {
