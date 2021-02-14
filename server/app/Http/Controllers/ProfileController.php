@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Profile;
 
 class ProfileController extends Controller
@@ -73,7 +72,11 @@ class ProfileController extends Controller
 
         } catch (\Exception $e) {
             Log::info("[Exception]" . __FUNCTION__ . $e->getMessage());
-            $response = ['message' => 'server error'];
+            $status = 500;
+            $response = [
+                'status' => $status,
+                'message' => $e->getMessage(),
+            ];
         }
 
         return response()->json($response);
@@ -115,7 +118,11 @@ class ProfileController extends Controller
 
         } catch (\Exception $e) {
             Log::info("[Exception]" . __FUNCTION__ . $e->getMessage());
-            $response = ['message' => 'server error'];
+            $status = 500;
+            $response = [
+                'status' => $status,
+                'message' => $e->getMessage(),
+            ];
         }
         return response()->json($response);
     }
@@ -123,6 +130,7 @@ class ProfileController extends Controller
 
     /**
      * 画像アップロードAPI
+     * TODO: S3に保存できるようにする
      *
      * @param Request $request
      * @return JsonResponse
@@ -151,11 +159,16 @@ class ProfileController extends Controller
             ];
         } catch (\Exception $e) {
             Log::info("[Exception]" . __FUNCTION__ . $e->getMessage());
-            $response = ['message' => 'server error'];
+            $status = 500;
+            $response = [
+                'status' => $status,
+                'message' => $e->getMessage(),
+            ];
         }
 
         return response()->json($response);
     }
+
 
     /**
      * 誕生日から逆算して年齢を出す
