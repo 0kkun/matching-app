@@ -8,8 +8,6 @@ class Profile extends Model
 {
     protected $table = 'profiles';
 
-    // protected $guarded = array('id');
-
     protected $fillable = [
         'tweet',
         'introduction',

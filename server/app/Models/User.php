@@ -10,7 +10,11 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $guarded = array('id');
+    protected $fillable = [
+        'name',
+        'prefecture_id',
+        'updated_at'
+    ];
 
     public $timestamps = true;
 
