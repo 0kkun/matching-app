@@ -84,7 +84,10 @@
                                         <option v-for="(pref, index) in prefLists" :key="pref.id" :value="index">{{ pref }}</option>
                                     </select>
                                     <input type="text" class="form-control w-50 mt-2" v-model="profile.job">
-                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.blood_type">
+                                    <select class="form-control w-50 mt-2" name="blood_type" v-model="profile.blood_type" options="prefLists">
+                                        <option v-for="blood in bloodType" :key="blood.id" :value="blood">{{ blood }}</option>
+                                    </select>
+
                                 </div>
                             </div>
 
@@ -115,8 +118,10 @@ export default {
             user: [],
             profile: [],
             prefLists: [],
+            bloodType: [],
             isShowEdit: false,
             url: '',
+            file: '',
             imageName: '',
         }
     },
@@ -130,6 +135,7 @@ export default {
                 this.user = response.data.data.login_user;
                 this.profile = response.data.data.profile[0];
                 this.prefLists = response.data.data.pref_lists;
+                this.bloodType = response.data.data.blood_type;
                 this.loadStatus = true;
             })
             .catch((error) => {
@@ -174,15 +180,17 @@ export default {
             });
 
             // 画像のアップロード
-            const formData = new FormData();
-            formData.append('file', this.file);
-            axios.post('/api/v1/profile/image_upload', formData)
-            .then((response) => {
-                console.log('upload success!');
-            })
-            .catch((error) => {
-                console.log(error); 
-            });
+            if (this.file != '') {
+                const formData = new FormData();
+                formData.append('file', this.file);
+                axios.post('/api/v1/profile/image_upload', formData)
+                .then((response) => {
+                    console.log('upload success!');
+                })
+                .catch((error) => {
+                    console.log(error); 
+                });
+            }
         },
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Profile;
 
 class ProfileController extends Controller
 {
@@ -58,7 +59,8 @@ class ProfileController extends Controller
             $data = [
                 'login_user' => $login_user,
                 'profile'    => $profile,
-                'pref_lists' => $this->pref_lists
+                'pref_lists' => $this->pref_lists,
+                'blood_type' => Profile::BLOOD_TYPE
             ];
 
             $response = [
@@ -119,21 +121,38 @@ class ProfileController extends Controller
     }
 
 
+    /**
+     * 画像アップロードAPI
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function imageUpload(Request $request): JsonResponse
     {
-        $status = 200;
+        try {
+            Log::info("[START] " . __FUNCTION__ );
 
-        // 画像保存処理
-        $file = $request->file;
-        $file_name = $file->getClientOriginalName();
-        $target_path = public_path('/images/');
-        $file->move($target_path, $file_name);
+            $status = 200;
 
-        $response = [
-            'status'  => $status,
-            'message' => '',
-            'data'    => '',
-        ];
+            $file = $request->file;
+            // 画像保存処理
+            if ( !empty($file) ) {
+                $file_name = $file->getClientOriginalName();
+                $target_path = public_path('/images/');
+                $file->move($target_path, $file_name);
+            } else {
+                $status = 204;
+            }
+
+            $response = [
+                'status'  => $status,
+                'message' => '',
+                'data'    => '',
+            ];
+        } catch (\Exception $e) {
+            Log::info("[Exception]" . __FUNCTION__ . $e->getMessage());
+            $response = ['message' => 'server error'];
+        }
 
         return response()->json($response);
     }
