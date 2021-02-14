@@ -94,11 +94,13 @@ class ProfileController extends Controller
 
             $inputs = $request->all();
 
-            $profile_inputs = $inputs['profile'];
-            $user_inputs = $inputs['user'];
+            if ( !empty($inputs) ) {
+                $this->profile_repository->updateProfile($login_user->id, $inputs['profile']);
+                $this->user_repository->updateUser($login_user->id, $inputs['user']);
+            } else {
+                $status = 204;
+            }
 
-            $this->profile_repository->updateProfile($login_user->id, $profile_inputs);
-            $this->user_repository->updateUser($login_user->id, $user_inputs);
 
             $response = [
                 'status'  => $status,
