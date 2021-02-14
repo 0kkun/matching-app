@@ -22,6 +22,7 @@ class ProfileController extends Controller
      * Constructor
      *
      * @param ProfileRepository $profile_repository
+     * @param UserRepository $user_repository
      */
     public function __construct(
         ProfileRepository $profile_repository,
