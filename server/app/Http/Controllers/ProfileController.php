@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -94,13 +95,13 @@ class ProfileController extends Controller
 
             $inputs = $request->all();
 
+            // テーブルアップデート処理
             if ( !empty($inputs) ) {
                 $this->profile_repository->updateProfile($login_user->id, $inputs['profile']);
                 $this->user_repository->updateUser($login_user->id, $inputs['user']);
             } else {
                 $status = 204;
             }
-
 
             $response = [
                 'status'  => $status,
@@ -117,6 +118,25 @@ class ProfileController extends Controller
         return response()->json($response);
     }
 
+
+    public function imageUpload(Request $request): JsonResponse
+    {
+        $status = 200;
+
+        // 画像保存処理
+        $file = $request->file;
+        $file_name = $file->getClientOriginalName();
+        $target_path = public_path('/images/');
+        $file->move($target_path, $file_name);
+
+        $response = [
+            'status'  => $status,
+            'message' => '',
+            'data'    => '',
+        ];
+
+        return response()->json($response);
+    }
 
     /**
      * 誕生日から逆算して年齢を出す

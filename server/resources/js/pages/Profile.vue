@@ -9,7 +9,12 @@
             <div class="col-sm-9">
                 <div v-if="!isShowEdit">
                     <div class="card mt-3">
-                        <img class="mx-auto mt-3" style="width:500px; height:350px" src="/images/cat1.jpeg">
+                        <div v-if="profile.image_name" class="text-center">
+                            <img class="mt-3 preview-image" :src="'/images/' + profile.image_name">
+                        </div>
+                        <div v-else class="text-center">
+                            <img class="mt-3 preview-image" :src="'/images/no_image.png'">
+                        </div>
                         <div class="h3 text-center pt-2">{{ user.name }}</div>
                     </div>
                     <div class="card mt-2 p-3">
@@ -53,7 +58,7 @@
                                 <div class="h5">プロフィール画像</div>
                                 <label class="btn btn-primary">
                                     Choose File
-                                    <input style="display:none;" ref="preview" @change="uploadFile" name="image" type="file" accept="image/jpeg, image/png">
+                                    <input style="display:none;" ref="preview" @change="uploadFile()" name="image" type="file" accept="image/jpeg, image/png">
                                 </label>
                                 <div v-if="url">
                                     <img :src="url" class="preview-image">
@@ -62,13 +67,13 @@
 
                             <div class="row">
                                 <div class="col-3 text-right">
-                                    <div for="name" class="h5 pt-2 mt-2">名前：</div>
-                                    <div for="tweet" class="h5 pt-2 mt-3">一言：</div>
-                                    <div for="introduction" class="h5 pt-2 mt-3">自己紹介：</div>
-                                    <div for="hobby" class="h5 mt-3 hobby-title">趣味：</div>
-                                    <div for="hobby" class="h5 mt-3 pt-2 mt-3">住所：</div>
-                                    <div for="hobby" class="h5 mt-3 pt-2 mt-3">仕事：</div>
-                                    <div for="hobby" class="h5 mt-3 pt-2 mt-3">血液型：</div>
+                                    <div class="h5 pt-2 mt-2">名前：</div>
+                                    <div class="h5 pt-2 mt-3">一言：</div>
+                                    <div class="h5 pt-2 mt-3">自己紹介：</div>
+                                    <div class="h5 mt-3 hobby-title">趣味：</div>
+                                    <div class="h5 mt-3 pt-2 mt-3">住所：</div>
+                                    <div class="h5 mt-3 pt-2 mt-3">仕事：</div>
+                                    <div class="h5 mt-3 pt-2 mt-3">血液型：</div>
                                 </div>
                                 <div class="col-9">
                                     <input type="text" class="form-control w-50 mt-2" v-model="user.name">
@@ -111,7 +116,8 @@ export default {
             profile: [],
             prefLists: [],
             isShowEdit: false,
-            url: ""
+            url: '',
+            imageName: '',
         }
     },
     mounted: function() {
@@ -132,14 +138,16 @@ export default {
         },
         uploadFile() {
             // refを設定した要素の情報を取得できる
-            const file = this.$refs.preview.files[0];
+            this.file = this.$refs.preview.files[0];
             // ブラウザ上の一時的な置き場に画像を配置しURLを生成する
-            this.url = URL.createObjectURL(file);
-            this.$refs.preview.value = "";
+            this.url = URL.createObjectURL(this.file);
+            this.imageName = this.file.name;
+            this.$refs.preview.value = '';
         },
         cancel() {
             this.isShowEdit = false;
             this.url = '';
+            this.file = '';
         },
         updateProfile() {
             axios.post('/api/v1/profile/update', {
@@ -152,13 +160,25 @@ export default {
                     introduction: this.profile.introduction,
                     hobby: this.profile.hobby,
                     job: this.profile.job,
-                    blood_type: this.profile.blood_type
-                }
+                    blood_type: this.profile.blood_type,
+                    image_name: this.imageName
+                },
             })
             .then((response) => {
                 this.getLoginUserProfile();
                 this.isShowEdit = false;
                 console.log('update success!');
+            })
+            .catch((error) => {
+                console.log(error); 
+            });
+
+            // 画像のアップロード
+            const formData = new FormData();
+            formData.append('file', this.file);
+            axios.post('/api/v1/profile/image_upload', formData)
+            .then((response) => {
+                console.log('upload success!');
             })
             .catch((error) => {
                 console.log(error); 
