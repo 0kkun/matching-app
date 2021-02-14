@@ -54,7 +54,9 @@ class EloquentProfileRepository implements ProfileRepository
      */
     public function createDefaultProfile(int $user_id): void
     {
-        $this->profiles->create(['user_id' => $user_id]);
+        $default_params = Profile::DEFAULT_PARAMS;
+        $default_params['user_id'] = $user_id;
+        $this->profiles->create($default_params);
     }
 
     /**
