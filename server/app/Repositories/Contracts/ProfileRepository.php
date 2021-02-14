@@ -29,4 +29,13 @@ interface ProfileRepository
      * @return void
      */
     public function createDefaultProfile(int $user_id): void;
+
+    /**
+     * プロフィールを更新する
+     *
+     * @param integer $user_id
+     * @param array $inputs
+     * @return void
+     */
+    public function updateProfile(int $user_id, array $inputs): void;
 }
