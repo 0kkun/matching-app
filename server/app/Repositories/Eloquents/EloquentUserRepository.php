@@ -20,7 +20,6 @@ class EloquentUserRepository implements UserRepository
         $this->users = $users;
     }
 
-
     /**
      * 全てのユーザーを取得する
      *
@@ -31,7 +30,6 @@ class EloquentUserRepository implements UserRepository
         return $this->users->get();
     }
 
-
     /**
      * idでユーザー情報を取得する
      *
@@ -41,5 +39,21 @@ class EloquentUserRepository implements UserRepository
     public function getByUserId(int $user_id): Collection
     {
         return $this->users->where('id', $user_id)->get();
+    }
+
+    /**
+     * プロフィールを更新する
+     * NOTE: Eloquent Modelとしてアップデートする
+     *
+     * @param integer $user_id
+     * @param array $inputs
+     * @return void
+     */
+    public function updateUser(int $user_id, array $inputs): void
+    {
+        $this->users
+            ->find($user_id)
+            ->fill($inputs)
+            ->save();
     }
 }

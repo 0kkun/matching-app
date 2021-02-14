@@ -20,4 +20,14 @@ interface UserRepository
      * @return Collection
      */
     public function getByUserId(int $user_id): Collection;
+
+    /**
+     * プロフィールを更新する
+     * NOTE: Eloquent Modelとしてアップデートする
+     *
+     * @param integer $user_id
+     * @param array $inputs
+     * @return void
+     */
+    public function updateUser(int $user_id, array $inputs): void;
 }

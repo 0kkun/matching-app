@@ -32,6 +32,7 @@ interface ProfileRepository
 
     /**
      * プロフィールを更新する
+     * NOTE: Eloquent Modelとしてアップデートする
      *
      * @param integer $user_id
      * @param array $inputs
