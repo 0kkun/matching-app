@@ -15,6 +15,7 @@ class ProfileController extends Controller
 {
     private $pref_lists;
     private $profile_repository;
+    private $user_repository;
 
     /**
      * Constructor
@@ -22,11 +23,13 @@ class ProfileController extends Controller
      * @param ProfileRepository $profile_repository
      */
     public function __construct(
-        ProfileRepository $profile_repository
+        ProfileRepository $profile_repository,
+        UserRepository $user_repository
     )
     {
         $this->pref_lists = config('pref');
         $this->profile_repository = $profile_repository;
+        $this->user_repository = $user_repository;
     }
 
     /**
@@ -92,13 +95,10 @@ class ProfileController extends Controller
             $inputs = $request->all();
 
             $profile_inputs = $inputs['profile'];
-
-            Log::info("request_params:" . $profile_inputs['tweet']);
-            Log::info("request_params:" . $profile_inputs['introduction']);
-            Log::info("request_params:" . $profile_inputs['hobby']);
-            Log::info("request_params:" . $profile_inputs['job']);
+            $user_inputs = $inputs['user'];
 
             $this->profile_repository->updateProfile($login_user->id, $profile_inputs);
+            $this->user_repository->updateUser($login_user->id, $user_inputs);
 
             $response = [
                 'status'  => $status,
