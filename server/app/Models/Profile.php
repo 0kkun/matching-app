@@ -10,11 +10,23 @@ class Profile extends Model
 
     protected $fillable = [
         'tweet',
+        'user_id',
         'introduction',
         'hobby',
         'blood_type',
         'job',
+        'image_name',
         'updated_at'
+    ];
+
+    // 新規プロフィール作成時に入る
+    const DEFAULT_PARAMS = [
+        'tweet' => '何か呟いてみよう！',
+        'introduction' => '自己紹介を書いて見よう！',
+        'hobby' => '-',
+        'blood_type' => '-',
+        'job' => '-',
+        'image_name' => '',
     ];
 
     public $timestamps = true;
