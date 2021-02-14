@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 
 class ProfileController extends Controller
 {
@@ -18,7 +19,7 @@ class ProfileController extends Controller
     /**
      * Constructor
      *
-     * @param UserRepository $user_repository
+     * @param ProfileRepository $profile_repository
      */
     public function __construct(
         ProfileRepository $profile_repository
@@ -45,26 +46,15 @@ class ProfileController extends Controller
 
             // 都道府県名テキストを追加
             $login_user->pref = $this->pref_lists[$login_user->prefecture_id];
-
             // 誕生日から逆算して年齢を追加
             $login_user->age = $this->calcAge($login_user->birthday);
-
-            $is_exists_profile = $this->profile_repository->isExistsProfile($login_user->id);
-
-            // プロフィール取得 or 作成取得
-            if ($is_exists_profile) {
-                $profile = $this->profile_repository->getProfile($login_user->id);
-            } else {
-                $this->profile_repository->createDefaultProfile($login_user->id);
-                $profile = $this->profile_repository->getProfile($login_user->id);
-            }
-
-            $pref_lists = config('pref');
+            // プロフィール取得
+            $profile = $this->getProfile($login_user->id);
 
             $data = [
                 'login_user' => $login_user,
                 'profile'    => $profile,
-                'pref_lists' => $pref_lists
+                'pref_lists' => $this->pref_lists
             ];
 
             $response = [
@@ -96,5 +86,27 @@ class ProfileController extends Controller
         $birthday = str_replace("-", "", $birthday);
 
         return (int) floor(($now-$birthday) / 10000);
+    }
+
+
+    /**
+     * ログインユーザーのプロフィールを取得する
+     *
+     * @param integer $user_id
+     * @return Collection
+     */
+    private function getProfile(int $user_id): Collection
+    {
+        // 存在確認
+        $is_exists_profile = $this->profile_repository->isExistsProfile($user_id);
+
+        // プロフィール取得 or 作成取得
+        if ($is_exists_profile) {
+            $profile = $this->profile_repository->getProfile($user_id);
+        } else {
+            $this->profile_repository->createDefaultProfile($user_id);
+            $profile = $this->profile_repository->getProfile($user_id);
+        }
+        return $profile;
     }
 }
