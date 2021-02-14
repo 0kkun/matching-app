@@ -24,9 +24,14 @@ class Profile extends Model
         'tweet' => '何か呟いてみよう！',
         'introduction' => '自己紹介を書いて見よう！',
         'hobby' => '-',
-        'blood_type' => '-',
+        'blood_type' => 'unknown',
         'job' => '-',
         'image_name' => '',
+    ];
+
+    // 血液型
+    const BLOOD_TYPE = [
+        'A', 'B', 'O', 'AB', 'unknown'
     ];
 
     public $timestamps = true;
