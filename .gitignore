@@ -4,6 +4,7 @@
 /server/node_modules
 /server/public/hot
 /server/public/storage
+/server/public/images/uploads
 /server/storage/*.key
 /server/vendor
 /server/.env
@@ -16,4 +17,3 @@
 /server/storage/debugbar/
 /server/public/js/app.js
 /server/public/css/app.css
-/server/public/images/

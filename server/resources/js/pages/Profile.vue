@@ -7,15 +7,97 @@
             </div>
 
             <div class="col-sm-9">
-                <div class="card mt-3">
-                    <img class="mx-auto mt-3" style="width:500px; height:350px" src="/images/cat1.jpeg">
-                    <div class="h3 text-center pt-2">ゲストさん</div>
-                    <div class="h4 text-center pt-2">一言 : 今日もいい天気</div>
-                    <div class="h4 text-center text-primary">--自己紹介--</div>
-                    <div class="h5 text-center p-3 ml-3 mr-3 bg-light">どうもです。テニス仲間募集中</div>
-                    <div class="h5 text-center">年齢 : 25</div>
-                    <div class="h5 text-center">趣味 : 野球</div>
-                    <div class="h5 text-center">住所 : 東京</div>
+                <div v-if="!isShowEdit">
+                    <div class="card mt-3">
+                        <div v-if="profile.image_name" class="text-center">
+                            <img class="mt-3 preview-image" :src="'/images/uploads/' + profile.image_name">
+                        </div>
+                        <div v-else class="text-center">
+                            <img class="mt-3 preview-image" :src="'/images/default/no_image.png'">
+                        </div>
+                        <div class="h3 text-center pt-2">{{ user.name }}</div>
+                    </div>
+                    <div class="card mt-2 p-3">
+                        <div class="h5 text-center pt-2">{{ profile.tweet }}</div>
+                    </div>
+                    <div class="card mt-2 p-3">
+                        <div class="h5 font-weight-bold text-center">自己紹介</div>
+                        <div class="h5 text-center p-3 ml-3 mr-3 bg-light">{{ profile.introduction }}</div>
+                    </div>
+                        
+                    <div class="card mt-2 p-3">
+                        <div class="row">
+                            <div class="col-6 h5 font-weight-bold text-right">
+                                <div>年齢：</div>
+                                <div class="pt-2">趣味：</div>
+                                <div class="pt-2">住所：</div>
+                                <div class="pt-2">仕事：</div>
+                                <div class="pt-2">性別：</div>
+                                <div class="pt-2">血液型：</div>
+                            </div>
+                            <div class="col-6 h5">
+                                <div>{{ user.age }}</div>
+                                <div class="pt-2">{{ profile.hobby }}</div>
+                                <div class="pt-2">{{ user.pref }}</div>
+                                <div class="pt-2">{{ profile.job }}</div>
+                                <div class="pt-2">{{ user.sex == 1 ? '男' : '女'}}</div>
+                                <div class="pt-2">{{ profile.blood_type }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center m-2">
+                        <button @click="isShowEdit=true" class="btn btn-danger w-100">編集する</button>
+                    </div>
+                </div>
+                <div v-if="isShowEdit">
+                    <div class="card mt-3 p-3">
+                        <div class="h2 text-center p-3">編集画面</div>
+                        <form action="" class="form-group" enctype="multipart/form-data">
+
+                            <div class="text-center">
+                                <div class="h5">プロフィール画像</div>
+                                <label class="btn btn-primary">
+                                    Choose File
+                                    <input style="display:none;" ref="preview" @change="uploadFile()" name="image" type="file" accept="image/jpeg, image/png">
+                                </label>
+                                <div v-if="url">
+                                    <img :src="url" class="preview-image">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-3 text-right">
+                                    <div class="h5 pt-2 mt-2">名前：</div>
+                                    <div class="h5 pt-2 mt-3">一言：</div>
+                                    <div class="h5 pt-2 mt-3">自己紹介：</div>
+                                    <div class="h5 mt-3 hobby-title">趣味：</div>
+                                    <div class="h5 mt-3 pt-2 mt-3">住所：</div>
+                                    <div class="h5 mt-3 pt-2 mt-3">仕事：</div>
+                                    <div class="h5 mt-3 pt-2 mt-3">血液型：</div>
+                                </div>
+                                <div class="col-9">
+                                    <input type="text" class="form-control w-50 mt-2" v-model="user.name">
+                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.tweet">
+                                    <textarea type="text" class="form-control mt-2" style="height:200px;" v-model="profile.introduction"></textarea>
+                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.hobby">
+                                    <select class="form-control w-50 mt-2" name="prefecture_id" v-model="user.prefecture_id" options="prefLists">
+                                        <option v-for="(pref, index) in prefLists" :key="pref.id" :value="index">{{ pref }}</option>
+                                    </select>
+                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.job">
+                                    <select class="form-control w-50 mt-2" name="blood_type" v-model="profile.blood_type" options="prefLists">
+                                        <option v-for="blood in bloodType" :key="blood.id" :value="blood">{{ blood }}</option>
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-3">
+                                <button @click.prevent="updateProfile()" type="submit" class="btn btn-success m-2">保存</button>
+                                <button @click.prevent="cancel()" class="btn btn-danger m-2">キャンセル</button>
+                            </div>
+
+                        </form>
+                    </div>
                 </div>
             </div>
 
@@ -30,9 +112,96 @@ export default {
     components: {
         SideBar,
     },
+    data() {
+        return {
+            loadStatus: false,
+            user: [],
+            profile: [],
+            prefLists: [],
+            bloodType: [],
+            isShowEdit: false,
+            url: '',
+            file: '',
+            imageName: '',
+        }
+    },
+    mounted: function() {
+        this.getLoginUserProfile();
+    },
+    methods: {
+        getLoginUserProfile() {
+            axios.get('/api/v1/profile/login_user')
+            .then((response) => {
+                this.user = response.data.data.login_user;
+                this.profile = response.data.data.profile[0];
+                this.prefLists = response.data.data.pref_lists;
+                this.bloodType = response.data.data.blood_type;
+                this.loadStatus = true;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        uploadFile() {
+            // refを設定した要素の情報を取得できる
+            this.file = this.$refs.preview.files[0];
+            // ブラウザ上の一時的な置き場に画像を配置しURLを生成する
+            this.url = URL.createObjectURL(this.file);
+            this.imageName = this.file.name;
+            this.$refs.preview.value = '';
+        },
+        cancel() {
+            this.isShowEdit = false;
+            this.url = '';
+            this.file = '';
+        },
+        updateProfile() {
+            axios.post('/api/v1/profile/update', {
+                user: {
+                    name: this.user.name,
+                    prefecture_id: this.user.prefecture_id,
+                },
+                profile: {
+                    tweet: this.profile.tweet,
+                    introduction: this.profile.introduction,
+                    hobby: this.profile.hobby,
+                    job: this.profile.job,
+                    blood_type: this.profile.blood_type,
+                    image_name: this.imageName
+                },
+            })
+            .then((response) => {
+                this.getLoginUserProfile();
+                this.isShowEdit = false;
+                console.log('update success!');
+            })
+            .catch((error) => {
+                console.log(error); 
+            });
+
+            // 画像のアップロード
+            if (this.file != '') {
+                const formData = new FormData();
+                formData.append('file', this.file);
+                axios.post('/api/v1/profile/image_upload', formData)
+                .then((response) => {
+                    console.log('upload success!');
+                })
+                .catch((error) => {
+                    console.log(error); 
+                });
+            }
+        },
+    }
 }
 </script>
 
 <style lang="scss" scoped>
-
+.hobby-title {
+    padding-top: 170px;
+}
+.preview-image {
+    max-height: 250px;
+    max-width: 400px;
+}
 </style>

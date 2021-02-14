@@ -10,14 +10,19 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
+        'birthday',
+        'email_verified_at',
+        'prefecture_id',
+        'sex',
+        'remember_token',
+        'updated_at'
     ];
+
+    public $timestamps = true;
 
     /**
      * The attributes that should be hidden for arrays.
@@ -36,4 +41,11 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /* ---------- リレーション定義 ---------- */
+
+    public function profiles()
+    {
+        return $this->hasOne(Profile::class);
+    }
 }
