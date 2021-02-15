@@ -33,4 +33,6 @@ Route::middleware('throttle:60,1', 'auth:web')->prefix('/api/v1')->group(functio
         Route::post('/update', 'ProfileController@updateProfile')->name('update');
         Route::post('/image_upload', 'ProfileController@imageUpload')->name('image_upload');
     });
+
+    Route::get('/search/fetch_users_list', 'SearchController@fetchUsersList')->name('search.fetch_users_list');
 }); 
