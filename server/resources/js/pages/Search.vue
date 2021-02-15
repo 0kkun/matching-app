@@ -72,16 +72,16 @@
                 <div class="card-columns pl-2">
                     <div v-for="user in users" :key="user.id">
                         <div class="card" style="height:290px; width:250px;">
-                            <div v-if="user.profile.image_name=='no_image.png'">
+                            <div v-if="user.image_name=='no_image.png'">
                                 <img class="card-img-top" style="max-height:200px;" src="/images/default/no_image.png">
                             </div>
                             <div v-else>
-                                <img class="card-img-top" style="max-height:200px;" :src="'/images/uploads/' + user.profile.image_name">
+                                <img class="card-img-top" style="max-height:200px;" :src="'/images/uploads/' + user.image_name">
                             </div>
                             <div class="card-body d-flex justify-content-between">
                                 <div>
-                                    <div>{{ user.name }}</div>
-                                    <p>{{ user.profile.tweet }}</p>
+                                    <div>{{ user.name }} ( {{ user.age }} ) {{ user.pref }} </div>
+                                    <p>{{ user.tweet }}</p>
                                 </div>
                                 <div>
                                     <a href="#" class="btn btn-primary rounded-circle"><i class="fas fa-thumbs-up"></i></a>
