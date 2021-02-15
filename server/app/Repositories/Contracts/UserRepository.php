@@ -30,4 +30,11 @@ interface UserRepository
      * @return void
      */
     public function updateUser(int $user_id, array $inputs): void;
+
+    /**
+     * プロフデータ付きで全てのユーザーを取得する
+     *
+     * @return Collection
+     */
+    public function fetchAllWithProfile(): Collection;
 }
