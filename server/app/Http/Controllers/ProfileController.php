@@ -5,18 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Repositories\Contracts\UserRepository;
 use App\Repositories\Contracts\ProfileRepository;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use App\Models\Profile;
+use App\Services\Profile\ProfileServiceInterface;
 
 class ProfileController extends Controller
 {
     private $pref_lists;
     private $profile_repository;
     private $user_repository;
+    private $profile_service;
 
     /**
      * Constructor
@@ -26,12 +27,14 @@ class ProfileController extends Controller
      */
     public function __construct(
         ProfileRepository $profile_repository,
-        UserRepository $user_repository
+        UserRepository $user_repository,
+        ProfileServiceInterface $profile_service
     )
     {
         $this->pref_lists = config('pref');
         $this->profile_repository = $profile_repository;
         $this->user_repository = $user_repository;
+        $this->profile_service = $profile_service;
     }
 
     /**
@@ -47,20 +50,16 @@ class ProfileController extends Controller
             Log::info("[START] " . __FUNCTION__ );
             $status = 200;
 
-            $login_user = Auth::user();
+            $login_user_id = Auth::id();
 
-            // 都道府県名テキストを追加
-            $login_user->pref = $this->pref_lists[$login_user->prefecture_id];
-            // 誕生日から逆算して年齢を追加
-            $login_user->age = $this->calcAge($login_user->birthday);
-            // プロフィール取得
-            $profile = $this->getProfile($login_user->id);
+            $this->checkProfileAndCreate($login_user_id);
+
+            $login_user = $this->profile_service->getUserInfoWithProfile($login_user_id);
 
             $data = [
                 'login_user' => $login_user,
-                'profile'    => $profile,
                 'pref_lists' => $this->pref_lists,
-                'blood_type' => Profile::BLOOD_TYPE
+                'blood_type_lists' => Profile::BLOOD_TYPE_LISTS
             ];
 
             $response = [
@@ -97,14 +96,14 @@ class ProfileController extends Controller
 
             $status = 200;
 
-            $login_user = Auth::user();
+            $login_user_id = Auth::id();
 
             $inputs = $request->all();
 
             // テーブルアップデート処理
             if ( !empty($inputs) ) {
-                $this->profile_repository->updateProfile($login_user->id, $inputs['profile']);
-                $this->user_repository->updateUser($login_user->id, $inputs['user']);
+                $this->profile_repository->updateProfile($login_user_id, $inputs['profile']);
+                $this->user_repository->updateUser($login_user_id, $inputs['user']);
             } else {
                 $status = 204;
             }
@@ -172,39 +171,19 @@ class ProfileController extends Controller
 
 
     /**
-     * 誕生日から逆算して年齢を出す
-     *
-     * @param string $birthday
-     * @return integer
-     */
-    private function calcAge(string $birthday): int
-    {
-        $now = Carbon::now()->format('Ymd');
-        // ハイフン削除
-        $birthday = str_replace("-", "", $birthday);
-
-        return (int) floor(($now-$birthday) / 10000);
-    }
-
-
-    /**
-     * ログインユーザーのプロフィールを取得する
+     * プロフィールが存在するか確認し、無ければ作成する
      *
      * @param integer $user_id
      * @return Collection
      */
-    private function getProfile(int $user_id): Collection
+    private function checkProfileAndCreate(int $user_id): void
     {
         // 存在確認
         $is_exists_profile = $this->profile_repository->isExistsProfile($user_id);
 
-        // プロフィール取得 or 作成取得
-        if ($is_exists_profile) {
-            $profile = $this->profile_repository->getProfile($user_id);
-        } else {
+        // プロフィールが存在しなければ作成
+        if (!$is_exists_profile) {
             $this->profile_repository->createDefaultProfile($user_id);
-            $profile = $this->profile_repository->getProfile($user_id);
         }
-        return $profile;
     }
 }
