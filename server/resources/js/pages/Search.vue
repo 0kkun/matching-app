@@ -6,7 +6,7 @@
             </div>
 
             <div class="col-sm-9">
-                <div class="card m-3 p-3">
+                <div class="card mt-3 mb-3 pt-3 pb-3">
                     <div class="input-group pr-5 pl-5">
                         <input type="text" class="form-control" placeholder="Please input keywords..." aria-label="Please input keywords..." aria-describedby="button-addon">
                         <div class="input-group-append">
@@ -17,45 +17,22 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <img class="card-img-top" src="/images/cat1.jpeg">
-                            <div class="card-body d-flex justify-content-between">
-                                <div>
-                                    <div>佐藤</div>
-                                    <p>初めまして</p>
-                                </div>
-                                <div>
-                                    <a href="#" class="btn btn-primary"><i class="fas fa-thumbs-up"></i></a>
-                                </div>
+                <div class="card-columns pl-2">
+                    <div v-for="user in users" :key="user.id">
+                        <div class="card" style="height:290px; width:250px;">
+                            <div v-if="user.profile.image_name=='no_image.png'">
+                                <img class="card-img-top" style="max-height:200px;" src="/images/default/no_image.png">
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <img class="card-img-top" src="images/cat1.jpeg">
-                            <div class="card-body d-flex justify-content-between">
-                                <div>
-                                    <div>佐藤</div>
-                                    <p>初めまして</p>
-                                </div>
-                                <div>
-                                    <a href="#" class="btn btn-primary"><i class="fas fa-thumbs-up"></i></a>
-                                </div>
+                            <div v-else>
+                                <img class="card-img-top" style="max-height:200px;" :src="'/images/uploads/' + user.profile.image_name">
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <img class="card-img-top" src="images/cat1.jpeg">
                             <div class="card-body d-flex justify-content-between">
                                 <div>
-                                    <div>佐藤</div>
-                                    <p>初めまして</p>
+                                    <div>{{ user.name }}</div>
+                                    <p>{{ user.profile.tweet }}</p>
                                 </div>
                                 <div>
-                                    <a href="#" class="btn btn-primary"><i class="fas fa-thumbs-up"></i></a>
+                                    <a href="#" class="btn btn-primary rounded-circle"><i class="fas fa-thumbs-up"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -76,8 +53,27 @@ export default {
     components: {
         SideBar,
     },
+    data() {
+        return {
+            users: [],
+            loadStatus: false,
+        }
+    },
     mounted() {
-        console.log('Component mounted.')
+        this.fetchUsersList();
+    },
+    methods: {
+        fetchUsersList() {
+            axios.get('/api/v1/search/fetch_users_list')
+            .then((response) => {
+                this.users = response.data.data;
+                this.loadStatus = true;
+                console.log(this.users);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        }
     }
 }
 </script>
