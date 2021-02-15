@@ -7,14 +7,66 @@
 
             <div class="col-sm-9">
                 <div class="card mt-3 mb-3 pt-3 pb-3">
-                    <div class="input-group pr-5 pl-5">
-                        <input type="text" class="form-control" placeholder="Please input keywords..." aria-label="Please input keywords..." aria-describedby="button-addon">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button">
+                    <form action="">
+                        <div class="input-group pr-5 pl-5">
+                            <input type="text" class="form-control" placeholder="Please input keywords..." aria-label="Please input keywords...">
+                        </div>
+
+                        <div class="row text-right">
+                            <div class="col-6">
+                                <div class="pt-3 pl-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sex" id="" value="1">
+                                        <label class="form-check-label" for="sex">男</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sex" id="" value="2" checked>
+                                        <label class="form-check-label" for="sex">女</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-2  pl-3">
+                                    <label>血液型：</label>
+                                    <select name="blood_type">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="AB">AB</option>
+                                        <option value="O">O</option>
+                                    </select>
+                                </div>
+                                <div class="pt-2  pl-3">
+                                    <label>住所：</label>
+                                    <select name="prefecture_id" id="">
+                                        <option value="">神奈川県</option>
+                                        <option value="">東京都</option>
+                                        <option value="">岡山県</option>
+                                        <option value="">大阪府</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-6 text-left">
+                                <div class="pt-3 pl-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="sex" id="" value="1">
+                                        <label class="form-check-label" for="sex">画像設定済み</label>
+                                    </div>
+                                </div>
+                                <div class="pt-2 pl-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="sex" id="" value="1">
+                                        <label class="form-check-label" for="sex">いいねが多い順</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-right pr-4">
+                            <button class="btn btn-success" type="button">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
-                    </div>
+
+                    </form>
                 </div>
 
                 <div class="card-columns pl-2">
