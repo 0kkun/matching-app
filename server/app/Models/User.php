@@ -26,6 +26,11 @@ class User extends Authenticatable
 
     const LIMIT_SIZE = 1000;
 
+    const SEX_TEXT = [
+        1 => '男',
+        2 => '女'
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
