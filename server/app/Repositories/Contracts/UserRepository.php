@@ -37,4 +37,11 @@ interface UserRepository
      * @return Collection
      */
     public function fetchAllWithProfile(): Collection;
+
+    /**
+     * プロフデータ付きでユーザーデータを取得する
+     *
+     * @return Collection
+     */
+    public function getWithProfile(int $user_id): Collection;
 }

@@ -69,4 +69,17 @@ class EloquentUserRepository implements UserRepository
             ->limit(User::LIMIT_SIZE)
             ->get();
     }
+
+    /**
+     * プロフデータ付きでユーザーデータを取得する
+     *
+     * @return Collection
+     */
+    public function getWithProfile(int $user_id): Collection
+    {
+        return $this->users
+            ->where('id', $user_id)
+            ->with('profile')
+            ->get();
+    }
 }
