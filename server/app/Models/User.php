@@ -24,6 +24,13 @@ class User extends Authenticatable
 
     public $timestamps = true;
 
+    const LIMIT_SIZE = 1000;
+
+    const SEX_TEXT = [
+        1 => '男',
+        2 => '女'
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -44,7 +51,7 @@ class User extends Authenticatable
 
     /* ---------- リレーション定義 ---------- */
 
-    public function profiles()
+    public function profile()
     {
         return $this->hasOne(Profile::class);
     }

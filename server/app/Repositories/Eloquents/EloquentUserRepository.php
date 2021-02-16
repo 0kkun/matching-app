@@ -56,4 +56,30 @@ class EloquentUserRepository implements UserRepository
             ->fill($inputs)
             ->save();
     }
+
+    /**
+     * プロフデータ付きで全てのユーザーを取得する
+     *
+     * @return Collection
+     */
+    public function fetchAllWithProfile(): Collection
+    {
+        return $this->users
+            ->with('profile')
+            ->limit(User::LIMIT_SIZE)
+            ->get();
+    }
+
+    /**
+     * プロフデータ付きでユーザーデータを取得する
+     *
+     * @return Collection
+     */
+    public function getWithProfile(int $user_id): Collection
+    {
+        return $this->users
+            ->where('id', $user_id)
+            ->with('profile')
+            ->get();
+    }
 }

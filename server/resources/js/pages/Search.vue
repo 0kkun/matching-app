@@ -6,56 +6,115 @@
             </div>
 
             <div class="col-sm-9">
-                <div class="card m-3 p-3">
+                <div class="card mt-3 mb-3 pt-3 pb-3">
                     <div class="input-group pr-5 pl-5">
-                        <input type="text" class="form-control" placeholder="Please input keywords..." aria-label="Please input keywords..." aria-describedby="button-addon">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button">
-                                <i class="fas fa-search"></i>
-                            </button>
+                        <input v-model="keywords" type="text" class="form-control" placeholder="Please input keywords..." aria-label="Please input keywords...">
+                    </div>
+
+                    <div class="row text-right">
+                        <div class="col-6">
+                            <div class="pt-3 pl-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sex" value="1" v-model="checkSex">
+                                    <label class="form-check-label" for="sex">男</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sex" value="2" v-model="checkSex">
+                                    <label class="form-check-label" for="sex">女</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sex" value="" v-model="checkSex" checked>
+                                    <label class="form-check-label" for="sex">指定無し</label>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-2  pl-3">
+                                <label>血液型：</label>
+                                <select name="blood_type" v-model="checkBloodType">
+                                    <option value="">指定無し</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="AB">AB</option>
+                                    <option value="O">O</option>
+                                </select>
+                            </div>
+                            <div class="pt-2  pl-3">
+                                <label>住所：</label>
+                                <select name="prefecture_id" v-model="checkPref">
+                                    <option value="">指定無し</option>
+                                    <option v-for="(pref, index) in prefLists" :key="pref.id" :value="index">{{ pref }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 text-left">
+                            <div class="pt-3 pl-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="image_setting" v-model="checkImageSetting">
+                                    <label class="form-check-label" for="image_setting">画像設定済み</label>
+                                </div>
+                            </div>
+                            <div class="pt-2 pl-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="good" value="1">
+                                    <label class="form-check-label" for="sex">いいねが多い順</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right pr-4">
+                        <button @click="reset()" href="#" class="btn btn-danger mr-2">Reset</button>
+                        <button @click="search()" class="btn btn-success" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div v-if="searchMode">
+                    <div class="text-center">検索中</div>
+                    <div class="card-columns pl-2">
+                        <div v-for="user in searchUsers" :key="user.id">
+                            <div class="card" style="height:290px; width:250px;">
+                                <div v-if="user.image_name=='no_image.png'">
+                                    <img class="card-img-top" style="max-height:200px;" src="/images/default/no_image.png">
+                                </div>
+                                <div v-else>
+                                    <img class="card-img-top" style="max-height:200px;" :src="'/images/uploads/' + user.image_name">
+                                </div>
+                                <div class="card-body d-flex justify-content-between">
+                                    <div>
+                                        <div>{{ user.name }} ( {{ user.age }} ) {{ user.pref }} </div>
+                                        <p>{{ user.tweet }}</p>
+                                    </div>
+                                    <div>
+                                        <a href="#" class="btn btn-primary rounded-circle"><i class="fas fa-thumbs-up"></i></a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <img class="card-img-top" src="/images/cat1.jpeg">
-                            <div class="card-body d-flex justify-content-between">
-                                <div>
-                                    <div>佐藤</div>
-                                    <p>初めまして</p>
+
+                <div v-else>
+                    <div class="text-center">全件表示中</div>
+                    <div class="card-columns pl-2">
+                        <div v-for="user in users" :key="user.id">
+                            <div class="card" style="height:290px; width:250px;">
+                                <div v-if="user.image_name=='no_image.png'">
+                                    <img class="card-img-top" style="max-height:200px;" src="/images/default/no_image.png">
                                 </div>
-                                <div>
-                                    <a href="#" class="btn btn-primary"><i class="fas fa-thumbs-up"></i></a>
+                                <div v-else>
+                                    <img class="card-img-top" style="max-height:200px;" :src="'/images/uploads/' + user.image_name">
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <img class="card-img-top" src="images/cat1.jpeg">
-                            <div class="card-body d-flex justify-content-between">
-                                <div>
-                                    <div>佐藤</div>
-                                    <p>初めまして</p>
-                                </div>
-                                <div>
-                                    <a href="#" class="btn btn-primary"><i class="fas fa-thumbs-up"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <img class="card-img-top" src="images/cat1.jpeg">
-                            <div class="card-body d-flex justify-content-between">
-                                <div>
-                                    <div>佐藤</div>
-                                    <p>初めまして</p>
-                                </div>
-                                <div>
-                                    <a href="#" class="btn btn-primary"><i class="fas fa-thumbs-up"></i></a>
+                                <div class="card-body d-flex justify-content-between">
+                                    <div>
+                                        <div>{{ user.name }} ( {{ user.age }} ) {{ user.pref }} </div>
+                                        <p>{{ user.tweet }}</p>
+                                    </div>
+                                    <div>
+                                        <a href="#" class="btn btn-primary rounded-circle"><i class="fas fa-thumbs-up"></i></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -76,9 +135,85 @@ export default {
     components: {
         SideBar,
     },
+    data() {
+        return {
+            users: [],
+            prefLists: [],
+            searchUsers: '',
+            loadStatus: false,
+            searchMode: false,
+            checkSex: '',
+            checkImageSetting: '',
+            checkBloodType: '',
+            checkPref: '',
+            keywords: '',
+        }
+    },
     mounted() {
-        console.log('Component mounted.')
-    }
+        this.fetchUsersList();
+    },
+    methods: {
+        fetchUsersList() {
+            axios.get('/api/v1/search/fetch_users_list')
+            .then((response) => {
+                this.users = response.data.data.users;
+                this.prefLists = response.data.data.pref_lists;
+                this.loadStatus = true;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        search() {
+            this.searchMode = true;
+            this.searchUsers = this.users;
+
+            // 性別のフィルタ
+            if (this.checkSex != '') {
+                this.searchUsers = this.searchUsers.filter((user) => {
+                    return user.sex == this.checkSex
+                },this);
+            }
+            // 画像のフィルタ
+            if (this.checkImageSetting != '') {
+                this.searchUsers = this.searchUsers.filter((user) => {
+                    return user.image_name != 'no_image.png';
+                },this);
+            }
+            // 血液型のフィルタ
+            if (this.checkBloodType != '') {
+                this.searchUsers = this.searchUsers.filter((user) => {
+                    return user.blood_type == this.checkBloodType;
+                },this);
+            }
+            // 都道府県のフィルタ
+            if (this.checkPref != '') {
+                this.searchUsers = this.searchUsers.filter((user) => {
+                    return user.prefecture_id == this.checkPref;
+                },this);
+            }
+            // キーワード検索
+            if (this.keywords != '') {
+                this.searchUsers = this.searchUsers.filter((user) => {
+                    return user.introduction.indexOf(this.keywords) != -1
+                },this);
+            }
+            // 何もチェックされていなければ検索モードを解除
+            if (this.checkImageSetting=='' && this.checkSex=='' && this.checkBloodType=='' && this.checkPref=='' && this.keywords=='') {
+                this.searchUsers = '';
+                this.searchMode = false;
+            }
+        },
+        reset() {
+            this.searchUsers = '';
+            this.checkSex = '';
+            this.checkImageSetting = '';
+            this.checkBloodType = '';
+            this.checkPref = '';
+            this.keywords = '';
+            this.searchMode = false;
+        }
+    },
 }
 </script>
 

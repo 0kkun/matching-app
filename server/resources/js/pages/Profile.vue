@@ -9,8 +9,8 @@
             <div class="col-sm-9">
                 <div v-if="!isShowEdit">
                     <div class="card mt-3">
-                        <div v-if="profile.image_name" class="text-center">
-                            <img class="mt-3 preview-image" :src="'/images/uploads/' + profile.image_name">
+                        <div v-if="user.image_name" class="text-center">
+                            <img class="mt-3 preview-image" :src="'/images/uploads/' + user.image_name">
                         </div>
                         <div v-else class="text-center">
                             <img class="mt-3 preview-image" :src="'/images/default/no_image.png'">
@@ -18,11 +18,11 @@
                         <div class="h3 text-center pt-2">{{ user.name }}</div>
                     </div>
                     <div class="card mt-2 p-3">
-                        <div class="h5 text-center pt-2">{{ profile.tweet }}</div>
+                        <div class="h5 text-center pt-2">{{ user.tweet }}</div>
                     </div>
                     <div class="card mt-2 p-3">
                         <div class="h5 font-weight-bold text-center">自己紹介</div>
-                        <div class="h5 text-center p-3 ml-3 mr-3 bg-light">{{ profile.introduction }}</div>
+                        <div class="h5 text-center p-3 ml-3 mr-3 bg-light">{{ user.introduction }}</div>
                     </div>
                         
                     <div class="card mt-2 p-3">
@@ -37,11 +37,11 @@
                             </div>
                             <div class="col-6 h5">
                                 <div>{{ user.age }}</div>
-                                <div class="pt-2">{{ profile.hobby }}</div>
+                                <div class="pt-2">{{ user.hobby }}</div>
                                 <div class="pt-2">{{ user.pref }}</div>
-                                <div class="pt-2">{{ profile.job }}</div>
+                                <div class="pt-2">{{ user.job }}</div>
                                 <div class="pt-2">{{ user.sex == 1 ? '男' : '女'}}</div>
-                                <div class="pt-2">{{ profile.blood_type }}</div>
+                                <div class="pt-2">{{ user.blood_type }}</div>
                             </div>
                         </div>
                     </div>
@@ -77,15 +77,15 @@
                                 </div>
                                 <div class="col-9">
                                     <input type="text" class="form-control w-50 mt-2" v-model="user.name">
-                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.tweet">
-                                    <textarea type="text" class="form-control mt-2" style="height:200px;" v-model="profile.introduction"></textarea>
-                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.hobby">
+                                    <input type="text" class="form-control w-50 mt-2" v-model="user.tweet">
+                                    <textarea type="text" class="form-control mt-2" style="height:200px;" v-model="user.introduction"></textarea>
+                                    <input type="text" class="form-control w-50 mt-2" v-model="user.hobby">
                                     <select class="form-control w-50 mt-2" name="prefecture_id" v-model="user.prefecture_id" options="prefLists">
                                         <option v-for="(pref, index) in prefLists" :key="pref.id" :value="index">{{ pref }}</option>
                                     </select>
-                                    <input type="text" class="form-control w-50 mt-2" v-model="profile.job">
-                                    <select class="form-control w-50 mt-2" name="blood_type" v-model="profile.blood_type" options="prefLists">
-                                        <option v-for="blood in bloodType" :key="blood.id" :value="blood">{{ blood }}</option>
+                                    <input type="text" class="form-control w-50 mt-2" v-model="user.job">
+                                    <select class="form-control w-50 mt-2" name="blood_type" v-model="user.blood_type" options="prefLists">
+                                        <option v-for="blood in bloodTypeLists" :key="blood.id" :value="blood">{{ blood }}</option>
                                     </select>
 
                                 </div>
@@ -116,9 +116,8 @@ export default {
         return {
             loadStatus: false,
             user: [],
-            profile: [],
             prefLists: [],
-            bloodType: [],
+            bloodTypeLists: [],
             isShowEdit: false,
             url: '',
             file: '',
@@ -132,10 +131,9 @@ export default {
         getLoginUserProfile() {
             axios.get('/api/v1/profile/login_user')
             .then((response) => {
-                this.user = response.data.data.login_user;
-                this.profile = response.data.data.profile[0];
+                this.user = response.data.data.login_user[0];
                 this.prefLists = response.data.data.pref_lists;
-                this.bloodType = response.data.data.blood_type;
+                this.bloodTypeLists = response.data.data.blood_type_lists;
                 this.loadStatus = true;
             })
             .catch((error) => {
@@ -156,24 +154,27 @@ export default {
             this.file = '';
         },
         updateProfile() {
+            if  (this.imageName == '') {
+                this.imageName = this.user.image_name;
+            }
             axios.post('/api/v1/profile/update', {
                 user: {
                     name: this.user.name,
                     prefecture_id: this.user.prefecture_id,
                 },
                 profile: {
-                    tweet: this.profile.tweet,
-                    introduction: this.profile.introduction,
-                    hobby: this.profile.hobby,
-                    job: this.profile.job,
-                    blood_type: this.profile.blood_type,
+                    tweet: this.user.tweet,
+                    introduction: this.user.introduction,
+                    hobby: this.user.hobby,
+                    job: this.user.job,
+                    blood_type: this.user.blood_type,
                     image_name: this.imageName
                 },
             })
             .then((response) => {
                 this.getLoginUserProfile();
                 this.isShowEdit = false;
-                console.log('update success!');
+                console.log('profile updated!');
             })
             .catch((error) => {
                 console.log(error); 
@@ -185,7 +186,7 @@ export default {
                 formData.append('file', this.file);
                 axios.post('/api/v1/profile/image_upload', formData)
                 .then((response) => {
-                    console.log('upload success!');
+                    console.log('image uploaded!');
                 })
                 .catch((error) => {
                     console.log(error); 

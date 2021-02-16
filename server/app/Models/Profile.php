@@ -30,7 +30,7 @@ class Profile extends Model
     ];
 
     // 血液型
-    const BLOOD_TYPE = [
+    const BLOOD_TYPE_LISTS = [
         'A', 'B', 'O', 'AB', 'unknown'
     ];
 
