@@ -47,10 +47,15 @@ class SearchController extends Controller
             // プロフ付きのユーザー情報を全件取得
             $users = $this->profile_service->fetchAllUsersWithProfile();
 
+            $data = [
+                'users' => $users,
+                'pref_lists' => $this->pref_lists
+            ];
+
             $response = [
                 'status'  => $status,
                 'message' => '',
-                'data'    => $users,
+                'data'    => $data,
             ];
 
             Log::info("[ END ] " . __FUNCTION__ . ", STATUS:" . $status);
