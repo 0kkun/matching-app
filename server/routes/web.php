@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home.index');
+Route::get('/home', 'HomeController@index')->name('home.index')->middleware('auth:web');
 
 Route::get('/home/{any?}', function() {
     return view('home.index');
