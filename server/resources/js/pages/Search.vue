@@ -241,5 +241,6 @@ export default {
 .search-card-image {
     width: auto;
     max-height: 200px;
+    cursor: pointer;
 }
 </style>
