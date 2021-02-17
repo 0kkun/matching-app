@@ -111,13 +111,13 @@
                                 <div v-else class="text-center">
                                     <img @click="openModal(user)" class="card-img-top search-card-image" :src="'/images/uploads/' + user.image_name">
                                 </div>
-                                <div class="card-body d-flex justify-content-between">
+                                <div class="card-body p-2 d-flex justify-content-between">
                                     <div>
                                         <div>{{ user.name }} ( {{ user.age }} ) {{ user.pref }} </div>
-                                        <p>{{ user.tweet }}</p>
+                                        <div class="tweet-text">{{ user.tweet }}</div>
                                     </div>
-                                    <div>
-                                        <a href="#" class="btn btn-primary rounded-circle"><i class="fas fa-thumbs-up"></i></a>
+                                    <div class="pt-3">
+                                        <div @click="likeCountUp()" href="" class="like-btn"><i class="fas fa-thumbs-up">：{{ likeCount }}</i></div>
                                     </div>
                                 </div>
                             </div>
@@ -155,6 +155,7 @@ export default {
             keywords: '',
             showContent: false,
             modalArg: '',
+            likeCount:  0,
         }
     },
     mounted() {
@@ -228,6 +229,9 @@ export default {
             this.checkPref = '';
             this.keywords = '';
             this.searchMode = false;
+        },
+        likeCountUp() {
+            this.likeCount += 1;
         }
     },
 }
@@ -242,5 +246,17 @@ export default {
     width: auto;
     max-height: 200px;
     cursor: pointer;
+}
+.like-btn {
+    background-color: rgb(247, 135, 154);
+    color: white;
+    cursor: pointer;
+    border-radius:3rem;
+    padding: 5px;
+}
+.tweet-text {
+    background-color: rgb(212, 229, 236);
+    border-radius:10px;
+    padding: 5px;
 }
 </style>
