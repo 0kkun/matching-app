@@ -117,7 +117,7 @@
                                         <div class="tweet-text">{{ user.tweet }}</div>
                                     </div>
                                     <div class="pt-3">
-                                        <div @click="likeCountUp()" href="" class="like-btn"><i class="fas fa-thumbs-up">：{{ likeCount }}</i></div>
+                                        <div @click="likeRequest(user.id)" href="" class="like-btn"><i class="fas fa-thumbs-up">：{{ likeCount }}</i></div>
                                     </div>
                                 </div>
                             </div>
@@ -230,8 +230,16 @@ export default {
             this.keywords = '';
             this.searchMode = false;
         },
-        likeCountUp() {
-            this.likeCount += 1;
+        likeRequest(receiveUserId) {
+            axios.post('/api/v1/like/create',{
+                receive_user_id: receiveUserId
+            })
+            .then((response) => {
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         }
     },
 }
