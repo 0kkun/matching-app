@@ -6,6 +6,9 @@
             </div>
 
             <div class="col-sm-9">
+                <!-- MEMO: iframeでアクセスして開くとアクセス拒否されてしまう。解決方法がわかったらモーダル&iframe表示を実装する -->
+
+
                 <div class="card mt-3 mb-3 pt-3 pb-3">
                     <div class="input-group pr-5 pl-5">
                         <input v-model="keywords" type="text" class="form-control" placeholder="Please input keywords..." aria-label="Please input keywords...">
@@ -74,12 +77,12 @@
                     <div class="text-center">検索中</div>
                     <div class="card-columns pl-2">
                         <div v-for="user in searchUsers" :key="user.id">
-                            <div class="card" style="height:290px; width:250px;">
-                                <div v-if="user.image_name=='no_image.png'">
-                                    <img class="card-img-top" style="max-height:200px;" src="/images/default/no_image.png">
+                            <div class="card search-user-card">
+                                <div v-if="user.image_name=='no_image.png'" class="text-center">
+                                    <img @click="openModal(user)" class="card-img-top search-card-image" src="/images/default/no_image.png">
                                 </div>
-                                <div v-else>
-                                    <img class="card-img-top" style="max-height:200px;" :src="'/images/uploads/' + user.image_name">
+                                <div v-else class="text-center">
+                                    <img @click="openModal(user)" class="card-img-top search-card-image" :src="'/images/uploads/' + user.image_name">
                                 </div>
                                 <div class="card-body d-flex justify-content-between">
                                     <div>
@@ -91,6 +94,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -100,12 +104,12 @@
                     <div class="text-center">全件表示中</div>
                     <div class="card-columns pl-2">
                         <div v-for="user in users" :key="user.id">
-                            <div class="card" style="height:290px; width:250px;">
-                                <div v-if="user.image_name=='no_image.png'">
-                                    <img class="card-img-top" style="max-height:200px;" src="/images/default/no_image.png">
+                            <div class="card search-user-card">
+                                <div v-if="user.image_name=='no_image.png'" class="text-center">
+                                    <img @click="openModal(user)" class="card-img-top search-card-image" src="/images/default/no_image.png">
                                 </div>
-                                <div v-else>
-                                    <img class="card-img-top" style="max-height:200px;" :src="'/images/uploads/' + user.image_name">
+                                <div v-else class="text-center">
+                                    <img @click="openModal(user)" class="card-img-top search-card-image" :src="'/images/uploads/' + user.image_name">
                                 </div>
                                 <div class="card-body d-flex justify-content-between">
                                     <div>
@@ -120,7 +124,7 @@
                         </div>
                     </div>
                 </div>
-
+                <ProfileModal :userProf="modalArg" v-show="showContent" @close="showContent = false" />
             </div>
         </div>
     </div>
@@ -130,10 +134,12 @@
 
 <script>
 import SideBar from '../components/SideBar.vue'
+import ProfileModal from '../components/ProfileModal.vue'
 
 export default {
     components: {
         SideBar,
+        ProfileModal,
     },
     data() {
         return {
@@ -147,6 +153,8 @@ export default {
             checkBloodType: '',
             checkPref: '',
             keywords: '',
+            showContent: false,
+            modalArg: '',
         }
     },
     mounted() {
@@ -163,6 +171,14 @@ export default {
             .catch((error) => {
                 console.log(error);
             });
+        },
+        openModal: function(user) {
+            this.showContent = true;
+            this.modalArg = user;
+        },
+        closeModal: function() {
+            this.showContent = false;
+            this.modalArg = '';
         },
         search() {
             this.searchMode = true;
@@ -218,4 +234,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-user-card {
+    height:290px;
+    width:250px;
+}
+.search-card-image {
+    width: auto;
+    max-height: 200px;
+    cursor: pointer;
+}
 </style>
