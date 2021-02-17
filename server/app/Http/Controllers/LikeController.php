@@ -38,12 +38,14 @@ class LikeController extends Controller
                 $receive_user_id = $request->receive_user_id;
                 $this->like_repository->createLikeRequest($request_user_id, $receive_user_id);
                 $status = 201;
+                $message = 'created!'
             } else {
                 $status = 400;
+                $message = 'bad request'
             }
             $response = [
                 'status'  => $status,
-                'message' => '',
+                'message' => $message,
             ];
             Log::info("[ END ] " . __FUNCTION__ . ", STATUS:" . $status);
         } catch (\Exception $e) {
