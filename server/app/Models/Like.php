@@ -10,7 +10,8 @@ class Like extends Model
 
     protected $fillable = [
         'request_user_id',
-        'accept_user_id',
+        'receive_user_id',
+        'is_matched',
         'updated_at',
     ];
 
