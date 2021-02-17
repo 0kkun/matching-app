@@ -16,8 +16,8 @@ class CreateLikesTable extends Migration
         Schema::create('likes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('request_user_id')->unsigned()->comment('likeをリクエストしたuser_id');
-            $table->bigInteger('accept_user_id')->nullable()->unsigned()->comment('likeを受け入れたuser_id');
-            $table->boolean('is_mached')->default(false)->comment('マッチしたかどうか');
+            $table->bigInteger('receive_user_id')->unsigned()->comment('likeリクエストを受けたuser_id');
+            $table->boolean('is_matched')->default(false)->comment('マッチしたかどうか');
             $table->timestamps();
 
             $table->foreign('request_user_id')
@@ -25,7 +25,7 @@ class CreateLikesTable extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->foreign('accept_user_id')
+            $table->foreign('receive_user_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
