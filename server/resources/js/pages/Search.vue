@@ -6,9 +6,6 @@
             </div>
 
             <div class="col-sm-9">
-                <!-- MEMO: iframeでアクセスして開くとアクセス拒否されてしまう。解決方法がわかったらモーダル&iframe表示を実装する -->
-
-
                 <div class="card mt-3 mb-3 pt-3 pb-3">
                     <div class="input-group pr-5 pl-5">
                         <input v-model="keywords" type="text" class="form-control" placeholder="Please input keywords..." aria-label="Please input keywords...">
