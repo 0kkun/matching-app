@@ -21,4 +21,13 @@ interface LikeRepository
      * @return void
      */
     public function acceptLikeRequest(int $request_user_id, int $receive_user_id): void;
+
+    /**
+     * 既にlikeをしているかどうか判定する
+     *
+     * @param integer $request_user_id
+     * @param integer $receive_user_id
+     * @return boolean
+     */
+    public function isAlreadyLiked(int $request_user_id, int $receive_user_id): bool;
 }

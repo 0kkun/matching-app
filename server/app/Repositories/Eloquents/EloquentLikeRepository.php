@@ -28,12 +28,15 @@ class EloquentLikeRepository implements LikeRepository
      */
     public function createLikeRequest(int $request_user_id, int $receive_user_id): void
     {
-        $params = [
-            'request_user_id' => $request_user_id,
-            'receive_user_id' => $receive_user_id,
-            'is_matched' => false,
-        ];
-        $this->likes->create($params);
+        // 自分にlikeできないようにする
+        if ($request_user_id !== $receive_user_id) {
+            $params = [
+                'request_user_id' => $request_user_id,
+                'receive_user_id' => $receive_user_id,
+                'is_matched' => false,
+            ];
+            $this->likes->create($params);
+        }
     }
 
     /**
@@ -55,5 +58,20 @@ class EloquentLikeRepository implements LikeRepository
             $update_likes_record->is_matched = true;
             $update_likes_record->save();
         }
+    }
+
+    /**
+     * 既にlikeをしているかどうか判定する
+     *
+     * @param integer $request_user_id
+     * @param integer $receive_user_id
+     * @return boolean
+     */
+    public function isAlreadyLiked(int $request_user_id, int $receive_user_id): bool
+    {
+        return $this->likes
+            ->where('request_user_id', $request_user_id)
+            ->where('receive_user_id', $receive_user_id)
+            ->exists();
     }
 }
