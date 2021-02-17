@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Log;
 class LikeController extends Controller
 {
     private $like_repository;
+
     /**
      * Constructor
      *
+     * @param LikeRepository $like_repository
      */
     public function __construct(
         LikeRepository $like_repository
@@ -25,6 +27,7 @@ class LikeController extends Controller
 
     /**
      * いいねボタン押下時のアクション
+     * まだ押されていなかったら追加、既に押されていたら削除
      *
      * @param Request $request
      * @return JsonResponse
@@ -34,14 +37,22 @@ class LikeController extends Controller
         try {
             Log::info("[START] " . __FUNCTION__ );
             if ($request->has('receive_user_id')) {
+
                 $request_user_id = Auth::id();
                 $receive_user_id = $request->receive_user_id;
+
+                if ($this->like_repository->isAlreadyLiked($request_user_id, $receive_user_id) ) {
+                    $status = 250;
+                    $response = ['status' => $status, 'message' => 'Error! already liked.'];
+                    return response()->json($response);
+                }
+
                 $this->like_repository->createLikeRequest($request_user_id, $receive_user_id);
                 $status = 201;
-                $message = 'created!'
+                $message = 'created!';
             } else {
                 $status = 400;
-                $message = 'bad request'
+                $message = 'bad request';
             }
             $response = [
                 'status'  => $status,
