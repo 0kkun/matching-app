@@ -29,6 +29,9 @@ class CreateLikesTable extends Migration
                 ->references('id')->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
+
+            // 複合ユニークにして、リクエストは一回までに制限
+            $table->unique(['request_user_id', 'receive_user_id']);
         });
     }
 
