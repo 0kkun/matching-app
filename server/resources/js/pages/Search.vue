@@ -86,8 +86,8 @@
                                         <div>{{ user.name }} ( {{ user.age }} ) {{ user.pref }} </div>
                                         <p>{{ user.tweet }}</p>
                                     </div>
-                                    <div>
-                                        <a href="#" class="btn btn-primary rounded-circle"><i class="fas fa-thumbs-up"></i></a>
+                                    <div class="pt-3">
+                                        <div @click="likeRequest(user.id)" href="" class="like-btn"><i class="fas fa-thumbs-up">：{{ user.likes_count }}</i></div>
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +114,7 @@
                                         <div class="tweet-text">{{ user.tweet }}</div>
                                     </div>
                                     <div class="pt-3">
-                                        <div @click="likeRequest(user.id)" href="" class="like-btn"><i class="fas fa-thumbs-up">：{{ likeCount }}</i></div>
+                                        <div @click="likeRequest(user.id)" href="" class="like-btn"><i class="fas fa-thumbs-up">：{{ user.likes_count }}</i></div>
                                     </div>
                                 </div>
                             </div>
@@ -140,8 +140,8 @@ export default {
     },
     data() {
         return {
-            users: [],
-            prefLists: [],
+            users: {},
+            prefLists: {},
             searchUsers: '',
             loadStatus: false,
             searchMode: false,
@@ -152,7 +152,6 @@ export default {
             keywords: '',
             showContent: false,
             modalArg: '',
-            likeCount:  0,
         }
     },
     mounted() {
@@ -162,7 +161,7 @@ export default {
         fetchUsersList() {
             axios.get('/api/v1/search/fetch_users_list')
             .then((response) => {
-                this.users = response.data.data.users;
+                this.users = Object.values(response.data.data.users);
                 this.prefLists = response.data.data.pref_lists;
                 this.loadStatus = true;
             })
@@ -232,12 +231,26 @@ export default {
                 receive_user_id: receiveUserId
             })
             .then((response) => {
+                // 正常にいいね処理が行われた場合はいいね数を更新
+                if (response.data.status == 201) {
+                    console.log(1);
+                    this.likeCountUp(receiveUserId);
+                }
                 console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);
             });
-        }
+        },
+        likeCountUp(receiveUserId) {
+            for (let i=0; i < this.users.length; i++) {
+                if (this.users[i].id == receiveUserId) {
+                    this.users[i].likes_count += 1;
+                    console.log('like count up success!');
+                    break;
+                }
+            }
+        } 
     },
 }
 </script>
