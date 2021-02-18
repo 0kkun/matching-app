@@ -6,6 +6,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Repositories\Contracts\UserRepository;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileService implements ProfileServiceInterface
 {
@@ -68,6 +69,11 @@ class ProfileService implements ProfileServiceInterface
     {
         $users = $this->user_repository->fetchAllWithProfile();
 
+        // ログイン中のユーザーは一覧から除外する
+        $users = $users->reject(function($user) {
+            return $user['id'] === Auth::id();
+        });
+
         // transformで元データを加工しつつ、フラットにする
         $users->transform(function ($user) {
             return [
@@ -85,8 +91,10 @@ class ProfileService implements ProfileServiceInterface
                 'blood_type'    => $user->profile->blood_type,
                 'job'           => $user->profile->job,
                 'image_name'    => $user->profile->image_name,
+                'likes_count'   => $user->likes_count,
             ];
         });
+
         return $users;
     }
 
