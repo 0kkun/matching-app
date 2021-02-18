@@ -58,6 +58,7 @@ class User extends Authenticatable
 
     public function likes()
     {
-        return $this->hasMany(Like::class);
+        // receive_user_idをリレーションさせる
+        return $this->hasMany(Like::class, 'receive_user_id');
     }
 }
