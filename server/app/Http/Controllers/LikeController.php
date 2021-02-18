@@ -41,6 +41,14 @@ class LikeController extends Controller
                 $request_user_id = Auth::id();
                 $receive_user_id = $request->receive_user_id;
 
+                // 自分自身にいいねを押させないためのエラーハンドリング
+                if ($request_user_id === $receive_user_id) {
+                    $status = 251;
+                    $response = ['status' => $status, 'message' => 'Error! cannot request to myself.'];
+                    return response()->json($response);
+                }
+
+                // 既に存在していた場合の処理
                 if ($this->like_repository->isAlreadyLiked($request_user_id, $receive_user_id) ) {
                     $status = 250;
                     $response = ['status' => $status, 'message' => 'Error! already liked.'];
