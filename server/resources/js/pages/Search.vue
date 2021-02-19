@@ -96,7 +96,6 @@
                     </div>
                 </div>
 
-
                 <div v-else>
                     <div class="text-center">全件表示中</div>
                     <div class="card-columns pl-2">
@@ -233,8 +232,10 @@ export default {
             .then((response) => {
                 // 正常にいいね処理が行われた場合はいいね数を更新
                 if (response.data.status == 201) {
-                    console.log(1);
                     this.likeCountUp(receiveUserId);
+                }
+                if (response.data.status == 204) {
+                    this.likeCountDown(receiveUserId);
                 }
                 console.log(response.data);
             })
@@ -250,7 +251,16 @@ export default {
                     break;
                 }
             }
-        } 
+        },
+        likeCountDown(receiveUserId)  {
+            for (let i=0; i < this.users.length; i++) {
+                if (this.users[i].id == receiveUserId) {
+                    this.users[i].likes_count -= 1;
+                    console.log('like count down success!');
+                    break;
+                }
+            }
+        }
     },
 }
 </script>

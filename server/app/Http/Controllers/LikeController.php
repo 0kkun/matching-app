@@ -50,8 +50,9 @@ class LikeController extends Controller
 
                 // 既に存在していた場合の処理
                 if ($this->like_repository->isAlreadyLiked($request_user_id, $receive_user_id) ) {
-                    $status = 250;
-                    $response = ['status' => $status, 'message' => 'Error! already liked.'];
+                    $this->like_repository->deleteLikeRecord($request_user_id, $receive_user_id);
+                    $status = 204;
+                    $response = ['status' => $status, 'message' => 'Likes record deleted!'];
                     return response()->json($response);
                 }
 
