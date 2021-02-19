@@ -55,8 +55,8 @@
                             </div>
                             <div class="pt-2 pl-3">
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="good" value="1">
-                                    <label class="form-check-label" for="sex">いいねが多い順</label>
+                                    <input class="form-check-input" type="checkbox" name="good" v-model="checkLikeSort">
+                                    <label class="form-check-label" for="good">いいねが多い順</label>
                                 </div>
                             </div>
                         </div>
@@ -148,6 +148,7 @@ export default {
             checkImageSetting: '',
             checkBloodType: '',
             checkPref: '',
+            checkLikeSort: '',
             keywords: '',
             showContent: false,
             modalArg: '',
@@ -210,8 +211,18 @@ export default {
                     return user.introduction.indexOf(this.keywords) != -1
                 },this);
             }
+            // いいねが多い順にソート
+            if (this.checkLikeSort != '') {
+                this.searchUsers = this.searchUsers.sort(function(a, b) {
+                    if (a.likes_count < b.likes_count) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                })
+            }
             // 何もチェックされていなければ検索モードを解除
-            if (this.checkImageSetting=='' && this.checkSex=='' && this.checkBloodType=='' && this.checkPref=='' && this.keywords=='') {
+            if (this.checkImageSetting=='' && this.checkSex=='' && this.checkBloodType=='' && this.checkPref=='' && this.keywords=='' && this.checkLikeSort=='') {
                 this.searchUsers = '';
                 this.searchMode = false;
             }
@@ -223,6 +234,7 @@ export default {
             this.checkBloodType = '';
             this.checkPref = '';
             this.keywords = '';
+            this.checkLikeSort = '';
             this.searchMode = false;
         },
         likeRequest(receiveUserId) {
