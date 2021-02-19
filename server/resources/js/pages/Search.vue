@@ -6,9 +6,6 @@
             </div>
 
             <div class="col-sm-9">
-                <!-- MEMO: iframeでアクセスして開くとアクセス拒否されてしまう。解決方法がわかったらモーダル&iframe表示を実装する -->
-
-
                 <div class="card mt-3 mb-3 pt-3 pb-3">
                     <div class="input-group pr-5 pl-5">
                         <input v-model="keywords" type="text" class="form-control" placeholder="Please input keywords..." aria-label="Please input keywords...">
@@ -58,8 +55,8 @@
                             </div>
                             <div class="pt-2 pl-3">
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="good" value="1">
-                                    <label class="form-check-label" for="sex">いいねが多い順</label>
+                                    <input class="form-check-input" type="checkbox" name="good" v-model="checkLikeSort">
+                                    <label class="form-check-label" for="good">いいねが多い順</label>
                                 </div>
                             </div>
                         </div>
@@ -89,8 +86,8 @@
                                         <div>{{ user.name }} ( {{ user.age }} ) {{ user.pref }} </div>
                                         <p>{{ user.tweet }}</p>
                                     </div>
-                                    <div>
-                                        <a href="#" class="btn btn-primary rounded-circle"><i class="fas fa-thumbs-up"></i></a>
+                                    <div class="pt-3">
+                                        <div @click="likeRequest(user.id)" href="" class="like-btn" :class="{ red:user.is_already_liked }"><i class="fas fa-thumbs-up">：{{ user.likes_count }}</i></div>
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +95,6 @@
                         </div>
                     </div>
                 </div>
-
 
                 <div v-else>
                     <div class="text-center">全件表示中</div>
@@ -111,13 +107,13 @@
                                 <div v-else class="text-center">
                                     <img @click="openModal(user)" class="card-img-top search-card-image" :src="'/images/uploads/' + user.image_name">
                                 </div>
-                                <div class="card-body d-flex justify-content-between">
+                                <div class="card-body p-2 d-flex justify-content-between">
                                     <div>
                                         <div>{{ user.name }} ( {{ user.age }} ) {{ user.pref }} </div>
-                                        <p>{{ user.tweet }}</p>
+                                        <div class="tweet-text">{{ user.tweet }}</div>
                                     </div>
-                                    <div>
-                                        <a href="#" class="btn btn-primary rounded-circle"><i class="fas fa-thumbs-up"></i></a>
+                                    <div class="pt-3">
+                                        <div @click="likeRequest(user.id)" href="" class="like-btn" :class="{ red:user.is_already_liked }"><i class="fas fa-thumbs-up">：{{ user.likes_count }}</i></div>
                                     </div>
                                 </div>
                             </div>
@@ -143,8 +139,8 @@ export default {
     },
     data() {
         return {
-            users: [],
-            prefLists: [],
+            users: {},
+            prefLists: {},
             searchUsers: '',
             loadStatus: false,
             searchMode: false,
@@ -152,6 +148,7 @@ export default {
             checkImageSetting: '',
             checkBloodType: '',
             checkPref: '',
+            checkLikeSort: '',
             keywords: '',
             showContent: false,
             modalArg: '',
@@ -164,7 +161,7 @@ export default {
         fetchUsersList() {
             axios.get('/api/v1/search/fetch_users_list')
             .then((response) => {
-                this.users = response.data.data.users;
+                this.users = Object.values(response.data.data.users);
                 this.prefLists = response.data.data.pref_lists;
                 this.loadStatus = true;
             })
@@ -214,8 +211,18 @@ export default {
                     return user.introduction.indexOf(this.keywords) != -1
                 },this);
             }
+            // いいねが多い順にソート
+            if (this.checkLikeSort != '') {
+                this.searchUsers = this.searchUsers.sort(function(a, b) {
+                    if (a.likes_count < b.likes_count) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                })
+            }
             // 何もチェックされていなければ検索モードを解除
-            if (this.checkImageSetting=='' && this.checkSex=='' && this.checkBloodType=='' && this.checkPref=='' && this.keywords=='') {
+            if (this.checkImageSetting=='' && this.checkSex=='' && this.checkBloodType=='' && this.checkPref=='' && this.keywords=='' && this.checkLikeSort=='') {
                 this.searchUsers = '';
                 this.searchMode = false;
             }
@@ -227,7 +234,46 @@ export default {
             this.checkBloodType = '';
             this.checkPref = '';
             this.keywords = '';
+            this.checkLikeSort = '';
             this.searchMode = false;
+        },
+        likeRequest(receiveUserId) {
+            axios.post('/api/v1/like/create',{
+                receive_user_id: receiveUserId
+            })
+            .then((response) => {
+                // 正常にいいね処理が行われた場合はいいね数を更新
+                if (response.data.status == 201) {
+                    this.likeCountUp(receiveUserId);
+                }
+                if (response.data.status == 204) {
+                    this.likeCountDown(receiveUserId);
+                }
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        likeCountUp(receiveUserId) {
+            for (let i=0; i < this.users.length; i++) {
+                if (this.users[i].id == receiveUserId) {
+                    this.users[i].likes_count += 1;
+                    this.users[i].is_already_liked = true;
+                    console.log('like count up success!');
+                    break;
+                }
+            }
+        },
+        likeCountDown(receiveUserId)  {
+            for (let i=0; i < this.users.length; i++) {
+                if (this.users[i].id == receiveUserId) {
+                    this.users[i].likes_count -= 1;
+                    this.users[i].is_already_liked = false;
+                    console.log('like count down success!');
+                    break;
+                }
+            }
         }
     },
 }
@@ -242,5 +288,20 @@ export default {
     width: auto;
     max-height: 200px;
     cursor: pointer;
+}
+.like-btn {
+    background-color: rgb(247, 135, 154);
+    color: white;
+    cursor: pointer;
+    border-radius:3rem;
+    padding: 5px;
+}
+.tweet-text {
+    background-color: rgb(212, 229, 236);
+    border-radius:10px;
+    padding: 5px;
+}
+.red {
+    background-color: red;
 }
 </style>

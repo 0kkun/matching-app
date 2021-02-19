@@ -59,6 +59,7 @@ class EloquentUserRepository implements UserRepository
 
     /**
      * プロフデータ付きで全てのユーザーを取得する
+     * 受け取ったlikeの数も含める
      *
      * @return Collection
      */
@@ -66,6 +67,8 @@ class EloquentUserRepository implements UserRepository
     {
         return $this->users
             ->with('profile')
+            ->withCount('likes')
+            ->with('likes')
             ->limit(User::LIMIT_SIZE)
             ->get();
     }
@@ -80,6 +83,7 @@ class EloquentUserRepository implements UserRepository
         return $this->users
             ->where('id', $user_id)
             ->with('profile')
+            ->withCount('likes')
             ->get();
     }
 }

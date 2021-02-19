@@ -55,4 +55,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class);
     }
+
+    public function likes()
+    {
+        // receive_user_idをリレーションさせる
+        return $this->hasMany(Like::class, 'receive_user_id');
+    }
 }
