@@ -87,7 +87,7 @@
                                         <p>{{ user.tweet }}</p>
                                     </div>
                                     <div class="pt-3">
-                                        <div @click="likeRequest(user.id)" href="" class="like-btn"><i class="fas fa-thumbs-up">：{{ user.likes_count }}</i></div>
+                                        <div @click="likeRequest(user.id)" href="" class="like-btn" :class="{ red:user.is_already_liked }"><i class="fas fa-thumbs-up">：{{ user.likes_count }}</i></div>
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +113,7 @@
                                         <div class="tweet-text">{{ user.tweet }}</div>
                                     </div>
                                     <div class="pt-3">
-                                        <div @click="likeRequest(user.id)" href="" class="like-btn"><i class="fas fa-thumbs-up">：{{ user.likes_count }}</i></div>
+                                        <div @click="likeRequest(user.id)" href="" class="like-btn" :class="{ red:user.is_already_liked }"><i class="fas fa-thumbs-up">：{{ user.likes_count }}</i></div>
                                     </div>
                                 </div>
                             </div>
@@ -247,6 +247,7 @@ export default {
             for (let i=0; i < this.users.length; i++) {
                 if (this.users[i].id == receiveUserId) {
                     this.users[i].likes_count += 1;
+                    this.users[i].is_already_liked = true;
                     console.log('like count up success!');
                     break;
                 }
@@ -256,6 +257,7 @@ export default {
             for (let i=0; i < this.users.length; i++) {
                 if (this.users[i].id == receiveUserId) {
                     this.users[i].likes_count -= 1;
+                    this.users[i].is_already_liked = false;
                     console.log('like count down success!');
                     break;
                 }
@@ -286,5 +288,8 @@ export default {
     background-color: rgb(212, 229, 236);
     border-radius:10px;
     padding: 5px;
+}
+.red {
+    background-color: red;
 }
 </style>
