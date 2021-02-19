@@ -36,6 +36,7 @@ Route::middleware('throttle:60,1', 'auth:web')->prefix('/api/v1')->group(functio
 
     // いいね機能関連のAPI
     Route::prefix('/like')->name('like.')->group(function () {
+        Route::get('/fetch_users_list', 'LikeController@fetchUsersList')->name('fetch_users_list');
         Route::post('/create', 'LikeController@createLikeRequest')->name('create');
     });
 
