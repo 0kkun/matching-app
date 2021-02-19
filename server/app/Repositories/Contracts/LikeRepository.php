@@ -2,8 +2,19 @@
 
 namespace App\Repositories\Contracts;
 
+use Illuminate\Support\Collection;
+
 interface LikeRepository
 {
+    /**
+     * ユーザーが受け取ったlikeリストを取得する
+     * まだマッチしていないケース
+     *
+     * @param integer $user_id
+     * @return Collection
+     */
+    public function fetchReceiveLike(int $user_id): Collection;
+
     /**
      * likeリクエストレコードを生成する
      *

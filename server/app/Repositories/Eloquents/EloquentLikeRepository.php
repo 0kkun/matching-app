@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquents;
 
 use App\Models\Like;
 use App\Repositories\Contracts\LikeRepository;
+use Illuminate\Support\Collection;
 
 class EloquentLikeRepository implements LikeRepository
 {
@@ -17,6 +18,21 @@ class EloquentLikeRepository implements LikeRepository
     )
     {
         $this->likes = $likes;
+    }
+
+    /**
+     * ユーザーが受け取ったlikeリストを取得する
+     * まだマッチしていないケース
+     *
+     * @param integer $user_id
+     * @return Collection
+     */
+    public function fetchReceiveLike(int $user_id): Collection
+    {
+        return $this->likes
+            ->where('receive_user_id', $user_id)
+            ->where('is_matched', false)
+            ->get();
     }
 
     /**
