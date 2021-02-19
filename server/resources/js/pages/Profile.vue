@@ -7,13 +7,11 @@
             </div>
 
             <div class="col-sm-9">
-                <div v-if="!isShowEdit">
+                <template v-if="!isShowEdit">
                     <div class="card mt-3">
-                        <div v-if="user.image_name" class="text-center">
-                            <img class="mt-3 preview-image" :src="'/images/uploads/' + user.image_name">
-                        </div>
-                        <div v-else class="text-center">
-                            <img class="mt-3 preview-image" :src="'/images/default/no_image.png'">
+                        <div class="text-center">
+                            <img v-if="user.image_name=='no_image.png'" class="mt-3 preview-image" :src="'/images/default/no_image.png'">
+                            <img v-else class="mt-3 preview-image" :src="'/images/uploads/' + user.image_name">
                         </div>
                         <div class="h3 text-center pt-2">{{ user.name }}</div>
                     </div>
@@ -48,8 +46,8 @@
                     <div class="text-center m-2">
                         <button @click="isShowEdit=true" class="btn btn-danger w-100">編集する</button>
                     </div>
-                </div>
-                <div v-if="isShowEdit">
+                </template>
+                <template v-else>
                     <div class="card mt-3 p-3">
                         <div class="h2 text-center p-3">編集画面</div>
                         <form action="" class="form-group" enctype="multipart/form-data">
@@ -98,7 +96,7 @@
 
                         </form>
                     </div>
-                </div>
+                </template>
             </div>
 
         </div>
@@ -152,6 +150,8 @@ export default {
             this.isShowEdit = false;
             this.url = '';
             this.file = '';
+            this.imageName = '';
+            console.log('canceled');
         },
         updateProfile() {
             if  (this.imageName == '') {
