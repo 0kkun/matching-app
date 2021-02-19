@@ -68,11 +68,11 @@ class ProfileService implements ProfileServiceInterface
     public function fetchAllUsersWithProfile(): Collection
     {
         $users = $this->user_repository->fetchAllWithProfile();
+        $login_user_id = Auth::id();
 
-        // ログイン中のユーザーは一覧から除外する
-        $users = $users->reject(function($user) {
-            return $user['id'] === Auth::id();
-        });
+        $users = $this->rejectLoginUser($users, $login_user_id);
+
+        $users = $this->addKeyForLoginUserAlreadyLiked($users, $login_user_id);
 
         // transformで元データを加工しつつ、フラットにする
         $users->transform(function ($user) {
@@ -92,9 +92,44 @@ class ProfileService implements ProfileServiceInterface
                 'job'           => $user->profile->job,
                 'image_name'    => $user->profile->image_name,
                 'likes_count'   => $user->likes_count,
+                'is_already_liked' => $user->is_already_liked,
             ];
         });
+        return $users;
+    }
 
+
+    /**
+     * ログイン中のユーザーは一覧から除外する
+     *
+     * @param Collection $users
+     * @param integer $login_user_id
+     * @return Collection
+     */
+    private function rejectLoginUser(Collection $users, int $login_user_id): Collection
+    {
+        return $users->reject(function($user) use ($login_user_id) {
+            return $user['id'] === $login_user_id;
+        });
+    }
+
+
+    /**
+     * ログインユーザーが既にいいねを押しているかどうかのキーを加える
+     *
+     * @param Collection $users
+     * @param integer $login_user_id
+     * @return Collection
+     */
+    private function addKeyForLoginUserAlreadyLiked(Collection $users, int $login_user_id): Collection
+    {
+        foreach ($users as $index => $user) {
+            if ($user->likes->contains('request_user_id', $login_user_id)) {
+                $users[$index]->is_already_liked  = true;
+            } else {
+                $users[$index]->is_already_liked  = false;
+            }
+        }
         return $users;
     }
 
