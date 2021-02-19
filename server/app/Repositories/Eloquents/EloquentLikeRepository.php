@@ -74,4 +74,20 @@ class EloquentLikeRepository implements LikeRepository
             ->where('receive_user_id', $receive_user_id)
             ->exists();
     }
+
+    /**
+     * likeレコードを1件削除する
+     *
+     * @param integer $request_user_id
+     * @param integer $receive_user_id
+     * @return void
+     */
+    public function deleteLikeRecord(int $request_user_id, int $receive_user_id): void
+    {
+        $this->likes
+            ->where('request_user_id', $request_user_id)
+            ->where('receive_user_id', $receive_user_id)
+            ->limit(1)
+            ->delete();
+    }
 }

@@ -30,4 +30,13 @@ interface LikeRepository
      * @return boolean
      */
     public function isAlreadyLiked(int $request_user_id, int $receive_user_id): bool;
+
+    /**
+     * likeレコードを1件削除する
+     *
+     * @param integer $request_user_id
+     * @param integer $receive_user_id
+     * @return void
+     */
+    public function deleteLikeRecord(int $request_user_id, int $receive_user_id): void;
 }
