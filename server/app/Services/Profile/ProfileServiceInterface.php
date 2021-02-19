@@ -18,7 +18,8 @@ interface ProfileServiceInterface
     /**
      * 全てのユーザーをプロフ付きで取得する
      *
+     * @param boolean $likes_mode - trueならいいねをリクエストしてきたユーザーだけに絞る
      * @return Collection
      */
-    public function fetchAllUsersWithProfile(): Collection;
+    public function fetchAllUsersWithProfile(bool $likes_mode): Collection;
 }

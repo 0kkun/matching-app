@@ -3,8 +3,9 @@
 namespace App\Services\Profile;
 
 use App\Models\User;
-use Carbon\Carbon;
+use App\Repositories\Contracts\LikeRepository;
 use App\Repositories\Contracts\UserRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,6 +13,7 @@ class ProfileService implements ProfileServiceInterface
 {
     private $pref_lists;
     private $user_repository;
+    private $like_repository;
 
     /**
      * Constructor
@@ -19,11 +21,13 @@ class ProfileService implements ProfileServiceInterface
      * @param UserRepository $user_repository
      */
     public function __construct(
-        UserRepository $user_repository
+        UserRepository $user_repository,
+        LikeRepository $like_repository
     )
     {
         $this->pref_lists = config('pref');
         $this->user_repository = $user_repository;
+        $this->like_repository = $like_repository;
     }
 
 
@@ -63,9 +67,10 @@ class ProfileService implements ProfileServiceInterface
     /**
      * 全てのユーザーをプロフ付きで取得する
      *
+     * @param boolean $likes_mode
      * @return Collection
      */
-    public function fetchAllUsersWithProfile(): Collection
+    public function fetchAllUsersWithProfile(bool $likes_mode): Collection
     {
         $users = $this->user_repository->fetchAllWithProfile();
         $login_user_id = Auth::id();
@@ -73,6 +78,10 @@ class ProfileService implements ProfileServiceInterface
         $users = $this->rejectLoginUser($users, $login_user_id);
 
         $users = $this->addKeyForLoginUserAlreadyLiked($users, $login_user_id);
+
+        if ($likes_mode) {
+            $users = $this->fillterOnlyLikeRequestToLoginUser($users, $login_user_id);
+        }
 
         // transformで元データを加工しつつ、フラットにする
         $users->transform(function ($user) {
@@ -130,6 +139,21 @@ class ProfileService implements ProfileServiceInterface
                 $users[$index]->is_already_liked  = false;
             }
         }
+        return $users;
+    }
+
+    /**
+     * ログインユーザーにリクエストしてきたユーザーだけに絞る
+     *
+     * @param Collection $users
+     * @param integer $login_user_id
+     * @return Collection
+     */
+    private function fillterOnlyLikeRequestToLoginUser(Collection $users, int $login_user_id): Collection
+    {
+        $like_request_user_ids = $this->like_repository->fetchReceiveLike($login_user_id)->pluck('request_user_id');
+        $users = $users->whereIn('id', $like_request_user_ids);
+
         return $users;
     }
 
