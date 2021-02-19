@@ -68,6 +68,7 @@ class EloquentUserRepository implements UserRepository
         return $this->users
             ->with('profile')
             ->withCount('likes')
+            ->with('likes')
             ->limit(User::LIMIT_SIZE)
             ->get();
     }
