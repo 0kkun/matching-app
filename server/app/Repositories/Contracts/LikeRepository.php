@@ -34,7 +34,7 @@ interface LikeRepository
     public function acceptLikeRequest(int $request_user_id, int $receive_user_id): void;
 
     /**
-     * 既にlikeをしているかどうか判定する
+     * リクエスト側が既にlikeをしているかどうか判定する
      *
      * @param integer $request_user_id
      * @param integer $receive_user_id
@@ -50,4 +50,13 @@ interface LikeRepository
      * @return void
      */
     public function deleteLikeRecord(int $request_user_id, int $receive_user_id): void;
+
+    /**
+     * 相手が既にlikeをしているかどうか判定する
+     *
+     * @param integer $request_user_id
+     * @param integer $receive_user_id
+     * @return boolean
+     */
+    public function isReceiveUserAlreadyLiked(int $request_user_id, int $receive_user_id): bool;
 }

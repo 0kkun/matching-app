@@ -64,15 +64,26 @@ class EloquentLikeRepository implements LikeRepository
      */
     public function acceptLikeRequest(int $request_user_id, int $receive_user_id): void
     {
-        // 更新対象のレコードを取得
-        $update_likes_record = $this->likes
+        // リクエスト側の更新対象のレコードを取得
+        $update_requestor_likes_record = $this->likes
+            ->where('request_user_id', $receive_user_id)
+            ->where('receive_user_id', $request_user_id)
+            ->first();
+
+        // レシーバ川の更新対象レコード取得
+        $update_receiver_likes_record = $this->likes
             ->where('request_user_id', $request_user_id)
             ->where('receive_user_id', $receive_user_id)
             ->first();
 
-        if ( !is_null($update_likes_record) ) {
-            $update_likes_record->is_matched = true;
-            $update_likes_record->save();
+        // 更新
+        if ( !is_null($update_requestor_likes_record) ) {
+            $update_requestor_likes_record->is_matched = true;
+            $update_requestor_likes_record->save();
+        }
+        if ( !is_null($update_requestor_likes_record) ) {
+            $update_receiver_likes_record->is_matched = true;
+            $update_receiver_likes_record->save();
         }
     }
 
@@ -105,5 +116,20 @@ class EloquentLikeRepository implements LikeRepository
             ->where('receive_user_id', $receive_user_id)
             ->limit(1)
             ->delete();
+    }
+
+    /**
+     * 相手が既にlikeをしているかどうか判定する
+     *
+     * @param integer $request_user_id
+     * @param integer $receive_user_id
+     * @return boolean
+     */
+    public function isReceiveUserAlreadyLiked(int $request_user_id, int $receive_user_id): bool
+    {
+        return $this->likes
+            ->where('request_user_id', $receive_user_id)
+            ->where('receive_user_id', $request_user_id)
+            ->exists();
     }
 }
