@@ -44,20 +44,20 @@ class ProfileService implements ProfileServiceInterface
         // transformで元データを加工しつつ、フラットにする
         $user->transform(function ($user) {
             return [
-                'id'            => $user->id,
-                'name'          => $user->name,
-                'prefecture_id' => $user->prefecture_id,
-                'pref'          => $this->pref_lists[$user->prefecture_id],
-                'birthday'      => $user->birthday,
-                'age'           =>  $this->calcAge($user->birthday),
-                'sex'           => $user->sex,
-                'sex_text'      => User::SEX_TEXT[$user->sex],
-                'tweet'         => $user->profile->tweet,
-                'introduction'  => $user->profile->introduction,
-                'hobby'         => $user->profile->hobby,
-                'blood_type'    => $user->profile->blood_type,
-                'job'           => $user->profile->job,
-                'image_name'    => $user->profile->image_name,
+                'id'               => $user->id,
+                'name'             => $user->name,
+                'prefecture_id'    => $user->prefecture_id,
+                'pref'             => $this->pref_lists[$user->prefecture_id],
+                'birthday'         => $user->birthday,
+                'age'              =>  $this->calcAge($user->birthday),
+                'sex'              => $user->sex,
+                'sex_text'         => User::SEX_TEXT[$user->sex],
+                'tweet'            => $user->profile->tweet,
+                'introduction'     => $user->profile->introduction,
+                'hobby'            => $user->profile->hobby,
+                'blood_type'       => $user->profile->blood_type,
+                'job'              => $user->profile->job,
+                'image_name'       => $user->profile->image_name,
             ];
         });
         return $user;
@@ -83,27 +83,30 @@ class ProfileService implements ProfileServiceInterface
             $users = $this->fillterOnlyLikeRequestToLoginUser($users, $login_user_id);
         }
 
-        // transformで元データを加工しつつ、フラットにする
-        $users->transform(function ($user) {
-            return [
-                'id'            => $user->id,
-                'name'          => $user->name,
-                'prefecture_id' => $user->prefecture_id,
-                'pref'          => $this->pref_lists[$user->prefecture_id],
-                'birthday'      => $user->birthday,
-                'age'           =>  $this->calcAge($user->birthday),
-                'sex'           => $user->sex,
-                'sex_text'      => User::SEX_TEXT[$user->sex],
-                'tweet'         => $user->profile->tweet,
-                'introduction'  => $user->profile->introduction,
-                'hobby'         => $user->profile->hobby,
-                'blood_type'    => $user->profile->blood_type,
-                'job'           => $user->profile->job,
-                'image_name'    => $user->profile->image_name,
-                'likes_count'   => $user->likes_count,
-                'is_already_liked' => $user->is_already_liked,
-            ];
-        });
+        $users = $this->transformReturnValue($users);
+
+        return $users;
+    }
+
+
+    /**
+     * ログインユーザーとマッチしているユーザだけのデータと共に、プロフ・コメントを取得する
+     *
+     * @return Collection
+     */
+    public function fetchMatchedUserWithProfAndComment(): Collection
+    {
+        $login_user_id = Auth::id();
+
+        $matched_user_ids = $this->like_repository
+            ->fetchMatchedLikes($login_user_id)
+            ->pluck('request_user_id')
+            ->toArray();
+
+        $users = $this->user_repository->fetchMatchedUserWithProfAndComment($matched_user_ids);
+
+        $users = $this->transformReturnValue($users);
+
         return $users;
     }
 
@@ -122,7 +125,6 @@ class ProfileService implements ProfileServiceInterface
         });
     }
 
-
     /**
      * ログインユーザーが既にいいねを押しているかどうかのキーを加える
      *
@@ -132,7 +134,7 @@ class ProfileService implements ProfileServiceInterface
      */
     private function addKeyForLoginUserAlreadyLiked(Collection $users, int $login_user_id): Collection
     {
-        foreach ($users as $index => $user) {
+        foreach ($users as $index    => $user) {
             if ($user->likes->contains('request_user_id', $login_user_id)) {
                 $users[$index]->is_already_liked  = true;
             } else {
@@ -151,12 +153,14 @@ class ProfileService implements ProfileServiceInterface
      */
     private function fillterOnlyLikeRequestToLoginUser(Collection $users, int $login_user_id): Collection
     {
-        $like_request_user_ids = $this->like_repository->fetchReceiveLike($login_user_id)->pluck('request_user_id');
+        $like_request_user_ids = $this->like_repository
+            ->fetchReceiveLike($login_user_id)
+            ->pluck('request_user_id');
+
         $users = $users->whereIn('id', $like_request_user_ids);
 
         return $users;
     }
-
 
     /**
      * 誕生日から逆算して年齢を出す
@@ -171,5 +175,37 @@ class ProfileService implements ProfileServiceInterface
         $birthday = str_replace("-", "", $birthday);
 
         return (int) floor(($now-$birthday) / 10000);
+    }
+
+    /**
+     * リターン用にデータを加工する
+     * transformで元データを加工しつつ、フラットにする
+     *
+     * @param Collection $users
+     * @return Collection
+     */
+    private function transformReturnValue(Collection $users): Collection
+    {
+        $users->transform(function ($user) {
+            return [
+                'id'               => $user->id,
+                'name'             => $user->name,
+                'prefecture_id'    => $user->prefecture_id,
+                'pref'             => $this->pref_lists[$user->prefecture_id],
+                'birthday'         => $user->birthday,
+                'age'              => $this->calcAge($user->birthday),
+                'sex'              => $user->sex,
+                'sex_text'         => User::SEX_TEXT[$user->sex],
+                'tweet'            => $user->profile->tweet,
+                'introduction'     => $user->profile->introduction,
+                'hobby'            => $user->profile->hobby,
+                'blood_type'       => $user->profile->blood_type,
+                'job'              => $user->profile->job,
+                'image_name'       => $user->profile->image_name,
+                'likes_count'      => $user->likes_count ?? 0,
+                'is_already_liked' => $user->is_already_liked ?? '',
+            ];
+        });
+        return $users;
     }
 }

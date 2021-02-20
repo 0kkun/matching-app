@@ -22,4 +22,11 @@ interface ProfileServiceInterface
      * @return Collection
      */
     public function fetchAllUsersWithProfile(bool $likes_mode): Collection;
+
+    /**
+     * ログインユーザーとマッチしているユーザだけの一覧と共に、プロフ・コメントを取得する
+     *
+     * @return Collection
+     */
+    public function fetchMatchedUserWithProfAndComment(): Collection;
 }
