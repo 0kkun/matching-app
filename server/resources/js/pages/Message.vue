@@ -6,11 +6,9 @@
             </div>
 
             <div class="col-sm-2 pt-3">
-                <div class="h4 text-center font-roundedmplus1c">マッチリスト</div>
+                <div class="h4 text-center font-roundedmplus1c">Match List</div>
                 <ul>
-                    <li class="name-list border">田中<i class="fas fa-angle-right float-right h4 pr-2"></i></li>
-                    <li class="name-list border">鈴木<i class="fas fa-angle-right float-right h4 pr-2"></i></li>
-                    <li class="name-list border active">たかし<i class="fas fa-angle-right float-right h4 pr-2"></i></li>
+                    <li v-for="user in users" :key="user.id" class="name-list border active">{{ user.name }}<i class="fas fa-angle-right float-right h4 pr-2"></i></li>
                 </ul>
             </div>
 
@@ -46,6 +44,29 @@ export default {
     components: {
         SideBar,
     },
+    data() {
+        return {
+            users: {},
+            loadStatus: false,
+            showContent: false,
+            modalArg: '',
+        }
+    },
+    mounted() {
+        this.fetchMatchedUsersList();
+    },
+    methods: {
+        fetchMatchedUsersList() {
+            axios.get('/api/v1/message/fetch_matched_users_list')
+            .then((response) => {
+                this.users = Object.values(response.data.data);
+                this.loadStatus = true;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+    }
 }
 </script>
 
