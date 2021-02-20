@@ -8,7 +8,7 @@
             <div class="col-sm-2 pt-3">
                 <div class="h4 text-center font-roundedmplus1c">Match List</div>
                 <ul>
-                    <li v-for="user in users" :key="user.id" class="name-list border active">{{ user.name }}<i class="fas fa-angle-right float-right h4 pr-2"></i></li>
+                    <li v-for="user in users" :key="user.id" @click="messageFocus(user.id)" :class="{ active:messageFocusUserId==user.id }" class="name-list border">{{ user.name }}<i class="fas fa-angle-right float-right h4 pr-2"></i></li>
                 </ul>
             </div>
 
@@ -47,6 +47,8 @@ export default {
     data() {
         return {
             users: {},
+            messages: {},
+            messageFocusUserId: '',
             loadStatus: false,
             showContent: false,
             modalArg: '',
@@ -59,13 +61,19 @@ export default {
         fetchMatchedUsersList() {
             axios.get('/api/v1/message/fetch_matched_users_list')
             .then((response) => {
-                this.users = Object.values(response.data.data);
+                this.users = Object.values(response.data.data.users);
+                this.messages = Object.values(response.data.data.messages);
                 this.loadStatus = true;
+                console.log(this.users);
+                console.log(this.messages);
             })
             .catch((error) => {
                 console.log(error);
             });
         },
+        messageFocus(userId) {
+            this.messageFocusUserId = userId;
+        }
     }
 }
 </script>
