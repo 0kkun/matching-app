@@ -91,7 +91,7 @@ class LikeController extends Controller
                     return response()->json($response);
                 }
 
-                // 既に存在していた場合の処理
+                // 既に存在していた場合は削除する
                 if ($this->like_repository->isAlreadyLiked($request_user_id, $receive_user_id) ) {
                     $this->like_repository->deleteLikeRecord($request_user_id, $receive_user_id);
                     $status = 204;
@@ -99,9 +99,19 @@ class LikeController extends Controller
                     return response()->json($response);
                 }
 
-                $this->like_repository->createLikeRequest($request_user_id, $receive_user_id);
-                $status = 201;
-                $message = 'created!';
+                // 相手が既にいいねしてきていた場合はマッチング状態にする
+                if ($this->like_repository->isReceiveUserAlreadyLiked($request_user_id, $receive_user_id)) {
+                    $this->like_repository->createLikeRequest($request_user_id, $receive_user_id);
+                    $this->like_repository->acceptLikeRequest($request_user_id, $receive_user_id);
+                    $status = 260;
+                    $message = 'matching!';
+                } else {
+                    // いいねリクエストを作成する
+                    $this->like_repository->createLikeRequest($request_user_id, $receive_user_id);
+                    $status = 201;
+                    $message = 'created!';
+                }
+
             } else {
                 $status = 400;
                 $message = 'bad request';
