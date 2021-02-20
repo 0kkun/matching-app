@@ -86,4 +86,20 @@ class EloquentUserRepository implements UserRepository
             ->withCount('likes')
             ->get();
     }
+
+    /**
+     * マッチ中のユーザーデータを取得する
+     * 同時にprofilesとlikesとcommentsも取得する
+     *
+     * @param array $matched_user_ids
+     * @return Collection
+     */
+    public function fetchMatchedUserWithProfAndComment(array $matched_user_ids): Collection
+    {
+        return $this->users
+            ->whereIn('id', $matched_user_ids)
+            ->with('profile')
+            ->withCount('likes')
+            ->get();
+    }
 }
