@@ -7,7 +7,7 @@
             <div class="col-sm-9">
 
                 <div>
-                    <div class="text-center">いいねリクエスト一覧</div>
+                    <div class="text-center h3 p-3 text-secondary">Received Like Request List</div>
                     <div class="card-columns pl-2">
                         <div v-for="user in users" :key="user.id">
                             <div class="card search-user-card">
