@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquents;
 
 use App\Repositories\Contracts\MessageRepository;
 use App\Models\Message;
+use Illuminate\Support\Collection;
 
 class EloquentMessageRepository implements MessageRepository
 {
@@ -35,5 +36,19 @@ class EloquentMessageRepository implements MessageRepository
             'message' => $message,
         ];
         $this->messages->create($params);
+    }
+
+    /**
+     * ログインユーザーが持っているメッセージを取得する
+     *
+     * @param integer $login_user_id
+     * @return Collection
+     */
+    public function fetchMessage(int $login_user_id): Collection
+    {
+        return $this->messages
+            ->where('send_user_id', $login_user_id)
+            ->where('receive_user_id', $login_user_id)
+            ->get();
     }
 }
