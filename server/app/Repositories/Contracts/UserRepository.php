@@ -47,10 +47,10 @@ interface UserRepository
 
     /**
      * マッチ中のユーザーデータを取得する
-     * 同時にprofilesとlikesとcommentsも取得する
+     * 同時にprofilesとlikesも取得する
      *
      * @param array $matched_user_ids
      * @return Collection
      */
-    public function fetchMatchedUserWithProfAndMessage(array $matched_user_ids): Collection;
+    public function fetchMatchedUserWithProfile(array $matched_user_ids): Collection;
 }

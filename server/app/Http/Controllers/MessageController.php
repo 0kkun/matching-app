@@ -45,9 +45,7 @@ class MessageController extends Controller
             Log::info("[START] " . __FUNCTION__ );
             $status = 200;
 
-            // コメントデータと一緒にログインユーザーとマッチしているユーザだけの一覧を取得する
-            // メッセージ画面から相手のプロフも確認したいのでプロフィール情報もつける
-            $users = $this->profile_service->fetchMatchedUserWithProfAndMessage();
+            $users = $this->profile_service->fetchMatchedUserWithProfile();
 
             $login_user_id = Auth::id();
             $messages = $this->message_repository->fetchMessage($login_user_id);
