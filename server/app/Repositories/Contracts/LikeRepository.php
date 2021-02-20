@@ -59,4 +59,12 @@ interface LikeRepository
      * @return boolean
      */
     public function isReceiveUserAlreadyLiked(int $request_user_id, int $receive_user_id): bool;
+
+    /**
+     * マッチ中のlikesデータを取得する
+     *
+     * @param integer $login_user_id
+     * @return Collection
+     */
+    public function fetchMatchedLikes(int $login_user_id): Collection;
 }

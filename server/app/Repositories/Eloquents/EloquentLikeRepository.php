@@ -132,4 +132,18 @@ class EloquentLikeRepository implements LikeRepository
             ->where('receive_user_id', $request_user_id)
             ->exists();
     }
+
+    /**
+     * マッチ中のlikesデータを取得する
+     *
+     * @param integer $login_user_id
+     * @return Collection
+     */
+    public function fetchMatchedLikes(int $login_user_id): Collection
+    {
+        return $this->likes
+            ->where('is_matched', true)
+            ->where('receive_user_id', $login_user_id)
+            ->get();
+    }
 }
