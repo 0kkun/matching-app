@@ -94,7 +94,7 @@ class ProfileService implements ProfileServiceInterface
      *
      * @return Collection
      */
-    public function fetchMatchedUserWithProfAndComment(): Collection
+    public function fetchMatchedUserWithProfAndMessage(): Collection
     {
         $login_user_id = Auth::id();
 
@@ -103,7 +103,7 @@ class ProfileService implements ProfileServiceInterface
             ->pluck('request_user_id')
             ->toArray();
 
-        $users = $this->user_repository->fetchMatchedUserWithProfAndComment($matched_user_ids);
+        $users = $this->user_repository->fetchMatchedUserWithProfAndMessage($matched_user_ids);
 
         $users = $this->transformReturnValue($users);
 

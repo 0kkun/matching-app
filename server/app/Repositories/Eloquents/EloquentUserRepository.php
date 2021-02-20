@@ -94,7 +94,7 @@ class EloquentUserRepository implements UserRepository
      * @param array $matched_user_ids
      * @return Collection
      */
-    public function fetchMatchedUserWithProfAndComment(array $matched_user_ids): Collection
+    public function fetchMatchedUserWithProfAndMessage(array $matched_user_ids): Collection
     {
         return $this->users
             ->whereIn('id', $matched_user_ids)

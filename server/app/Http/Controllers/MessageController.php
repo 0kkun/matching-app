@@ -37,8 +37,8 @@ class MessageController extends Controller
 
             // コメントデータと一緒にログインユーザーとマッチしているユーザだけの一覧を取得する
             // メッセージ画面から相手のプロフも確認したいのでプロフィール情報もつける
-            // 要約すると、マッチしているユーザー with プロフィール with コメント
-            $users = $this->profile_service->fetchMatchedUserWithProfAndComment();
+            // 要約すると、マッチしているユーザー with プロフィール with メッセージ
+            $users = $this->profile_service->fetchMatchedUserWithProfAndMessage();
 
             $response = [
                 'status'  => $status,

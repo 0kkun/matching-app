@@ -52,5 +52,5 @@ interface UserRepository
      * @param array $matched_user_ids
      * @return Collection
      */
-    public function fetchMatchedUserWithProfAndComment(array $matched_user_ids): Collection;
+    public function fetchMatchedUserWithProfAndMessage(array $matched_user_ids): Collection;
 }
