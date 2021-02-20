@@ -15,6 +15,7 @@ class RepositoryServiceProvider extends ServiceProvider
         'User',
         'Profile',
         'Like',
+        'Message'
     ];
 
 
