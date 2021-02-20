@@ -120,7 +120,9 @@
                         </div>
                     </div>
                 </div>
-                <ProfileModal :userProf="modalArg" v-show="showContent" @close="showContent = false" />
+                <transition>
+                    <ProfileModal :userProf="modalArg" v-show="showContent" @close="showContent = false" />
+                </transition>
             </div>
         </div>
     </div>
