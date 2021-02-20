@@ -48,7 +48,7 @@ class EloquentMessageRepository implements MessageRepository
     {
         return $this->messages
             ->where('send_user_id', $login_user_id)
-            ->where('receive_user_id', $login_user_id)
+            ->orWhere('receive_user_id', $login_user_id)
             ->get();
     }
 }
