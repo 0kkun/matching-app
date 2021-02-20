@@ -43,9 +43,10 @@ class SearchController extends Controller
         try {
             Log::info("[START] " . __FUNCTION__ );
             $status = 200;
+            $likes_mode = false;
 
             // プロフ付きのユーザー情報を全件取得
-            $users = $this->profile_service->fetchAllUsersWithProfile();
+            $users = $this->profile_service->fetchAllUsersWithProfile($likes_mode);
 
             $data = [
                 'users' => $users,
