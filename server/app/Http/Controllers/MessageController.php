@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Repositories\Contracts\LikeRepository;
+use App\Repositories\Contracts\MessageRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Services\Profile\ProfileServiceInterface;
@@ -12,6 +13,7 @@ use App\Services\Profile\ProfileServiceInterface;
 class MessageController extends Controller
 {
     private $like_repository;
+    private $message_repository;
     private $profile_service;
 
     /**
@@ -21,14 +23,22 @@ class MessageController extends Controller
      */
     public function __construct(
         LikeRepository $like_repository,
+        MessageRepository $message_repository,
         ProfileServiceInterface $profile_service
     )
     {
         $this->like_repository = $like_repository;
+        $this->message_repository = $message_repository;
         $this->profile_service = $profile_service;
     }
 
 
+    /**
+     * マッチ中のユーザー情報とプロフ、メッセージを取得するAPI
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function fetchMatchedUsersList(Request $request): JsonResponse
     {
         try {
@@ -37,13 +47,21 @@ class MessageController extends Controller
 
             // コメントデータと一緒にログインユーザーとマッチしているユーザだけの一覧を取得する
             // メッセージ画面から相手のプロフも確認したいのでプロフィール情報もつける
-            // 要約すると、マッチしているユーザー with プロフィール with メッセージ
             $users = $this->profile_service->fetchMatchedUserWithProfAndMessage();
+
+            $login_user_id = Auth::id();
+            $messages = $this->message_repository->fetchMessage($login_user_id);
+
+            $data = [
+                'users' => $users,
+                'messages' => $messages,
+                'login_user_id' => $login_user_id
+            ];
 
             $response = [
                 'status'  => $status,
                 'message' => '',
-                'data'    => $users,
+                'data'    => $data,
             ];
 
         } catch (\Exception $e) {
