@@ -8,23 +8,35 @@
             <div class="col-sm-2 pt-3">
                 <div class="h4 text-center font-roundedmplus1c">Match List</div>
                 <ul>
-                    <li v-for="user in users" :key="user.id" @click="messageFocus(user.id)" :class="{ active:messageFocusUserId==user.id }" class="name-list border">{{ user.name }}<i class="fas fa-angle-right float-right h4 pr-2"></i></li>
+                    <li v-for="(user, index) in users" 
+                        :key="`first-${index}`"
+                        :class="{ active:messageFocusUserId==user.id }"
+                        @click="messageFocus(user.id)"
+                        class="name-list border"
+                    >
+                        {{ user.name }}<i class="fas fa-angle-right float-right h4 pr-2"></i>
+                    </li>
                 </ul>
             </div>
 
+            <!-- メッセージ表示 -->
             <div class="col-sm-7 bg-white border rounded mt-3">
+                <div class="message-box-aria">
+                    <div v-for="(mes, index) in showMessage" :key="`second-${index}`">
+                        <div v-if="mes.send_user_id!=loginUserId" class="d-flex" style="clear:both;">
+                            <div class="name">{{ mes.name }}</div>
+                            <div class="message">{{ mes.message }}</div>
+                        </div>
 
-                <div class="d-flex">
-                    <div class="name">たかし</div>
-                    <div class="message">こんにちは</div>
+                        <div v-else class="d-flex float-right" style="clear:both;">
+                            <div class="message">{{ mes.message }}</div>
+                            <div class="name">{{ mes.name }}</div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="d-flex float-right">
-                    <div class="message">ヤッホー</div>
-                    <div class="name">あなた</div>
-                </div>
 
-                <div class="input-group">
+                <div class="input-group pb-3">
                     <input type="text" class="form-control" placeholder="Input message..." aria-label="Input message..." aria-describedby="button-addon">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button">
@@ -48,7 +60,9 @@ export default {
         return {
             users: {},
             messages: {},
+            showMessage: {},
             messageFocusUserId: '',
+            loginUserId: '',
             loadStatus: false,
             showContent: false,
             modalArg: '',
@@ -63,8 +77,12 @@ export default {
             .then((response) => {
                 this.users = Object.values(response.data.data.users);
                 this.messages = Object.values(response.data.data.messages);
+                this.loginUserId = response.data.data.login_user_id;
+                this.messageFocusUserId = this.users[0].id;
+                this.messageFocus(this.messageFocusUserId);
                 this.loadStatus = true;
                 console.log(this.users);
+                console.log(this.loginUserId);
                 console.log(this.messages);
             })
             .catch((error) => {
@@ -73,6 +91,10 @@ export default {
         },
         messageFocus(userId) {
             this.messageFocusUserId = userId;
+            this.showMessage = this.messages;
+            this.showMessage = this.showMessage.filter((mes) => {
+                return mes.send_user_id == userId || mes.send_user_id == this.loginUserId;
+            },this);
         }
     }
 }
@@ -93,6 +115,10 @@ export default {
     font-size: 16px;
     background: #e0edff;
     border-radius: 15px;
+}
+.message-box-aria {
+    height: 70vh;
+    overflow: scroll;
 }
 ul {
     padding: 0;
