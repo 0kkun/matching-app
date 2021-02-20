@@ -30,8 +30,9 @@
                         </div>
                     </div>
                 </div>
-                <ProfileModal :userProf="modalArg" v-show="showContent" @close="showContent = false" />
-
+                <transition>
+                    <ProfileModal :userProf="modalArg" v-show="showContent" @close="showContent = false" />
+                </transition>
             </div>
         </div>
     </div>
@@ -62,7 +63,7 @@ export default {
         fetchUsersForLikeRequested() {
             axios.get('/api/v1/like/fetch_users_list')
             .then((response) => {
-                this.users = response.data.data;
+                this.users = Object.values(response.data.data);
                 this.loadStatus = true;
                 console.log(this.users);
             })
@@ -75,11 +76,27 @@ export default {
                 receive_user_id: receiveUserId
             })
             .then((response) => {
+                this.rejectMatchingUser(receiveUserId);
                 console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);
             });
+        },
+        // リクエストしてきたユーザーから、マッチングしたユーザーを削除する
+        rejectMatchingUser(receiveUserId) {
+            console.log('start');
+            this.users = this.users.filter((user) => {
+                    return user.id !== receiveUserId;
+            },this);
+        },
+        openModal: function(user) {
+            this.showContent = true;
+            this.modalArg = user;
+        },
+        closeModal: function() {
+            this.showContent = false;
+            this.modalArg = '';
         },
     }
 }
