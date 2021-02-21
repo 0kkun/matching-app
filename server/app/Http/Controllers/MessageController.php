@@ -72,4 +72,42 @@ class MessageController extends Controller
         }
         return response()->json($response);
     }
+
+    /**
+     * メッセージを作成するAPI
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function create(Request $request): JsonResponse
+    {
+        try {
+            Log::info("[START] " . __FUNCTION__ );
+            $status = 201;
+
+            if (!empty($request->all())) {
+                $inputs = $request->all();
+                $this->message_repository
+                    ->createMessage($inputs['send_user_id'], $inputs['receive_user_id'], $inputs['message']);
+                $message = 'created!';
+            } else {
+                $status = 400;
+                $message = 'bad request!';
+            }
+
+            $response = [
+                'status'  => $status,
+                'message' => $message,
+            ];
+
+        } catch (\Exception $e) {
+            Log::info("[Exception]" . __FUNCTION__ . $e->getMessage());
+            $status = 500;
+            $response = [
+                'status' => $status,
+                'message' => $e->getMessage(),
+            ];
+        }
+        return response()->json($response);
+    }
 }
