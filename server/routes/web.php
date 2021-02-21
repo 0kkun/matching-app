@@ -43,6 +43,7 @@ Route::middleware('throttle:60,1', 'auth:web')->prefix('/api/v1')->group(functio
     // メッセージ機能関連のAPI
     Route::prefix('/message')->name('message.')->group(function () {
         Route::get('/fetch_matched_users_list', 'MessageController@fetchMatchedUsersList')->name('fetch_matched_users_list');
+        Route::post('/create', 'MessageController@create')->name('create');
     });
 
     Route::get('/search/fetch_users_list', 'SearchController@fetchUsersList')->name('search.fetch_users_list');
