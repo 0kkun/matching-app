@@ -26,7 +26,7 @@ class Profile extends Model
         'hobby' => '-',
         'blood_type' => 'unknown',
         'job' => '-',
-        'image_name' => '',
+        'image_name' => 'no_image.png',
     ];
 
     // 血液型

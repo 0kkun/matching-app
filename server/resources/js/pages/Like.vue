@@ -11,10 +11,10 @@
                     <div class="card-columns pl-2">
                         <div v-for="user in users" :key="user.id">
                             <div class="card search-user-card">
-                                <div v-if="user.image_name=='no_image.png'" class="text-center">
+                                <div v-if="user.image_name=='no_image.png'" class="text-center card-image-area">
                                     <img @click="openModal(user)" class="card-img-top search-card-image" src="/images/default/no_image.png">
                                 </div>
-                                <div v-else class="text-center">
+                                <div v-else class="text-center card-image-area">
                                     <img @click="openModal(user)" class="card-img-top search-card-image" :src="'/images/uploads/' + user.image_name">
                                 </div>
                                 <div class="card-body p-2 d-flex justify-content-between">
@@ -107,8 +107,11 @@ export default {
     height:290px;
     width:250px;
 }
+.card-image-area {
+    height: 200px;
+}
 .search-card-image {
-    width: auto;
+    width: 100%;
     max-height: 200px;
     cursor: pointer;
 }
