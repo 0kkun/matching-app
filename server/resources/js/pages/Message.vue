@@ -135,10 +135,11 @@ export default {
 .message {
     margin: 1.5em 0;
     padding: 7px 10px;
-    min-width: 120px;
+    min-width: 10px;
     max-width: 100%;
     color: #555;
     font-size: 16px;
+    line-height: 30px;
     background: #e0edff;
     border-radius: 15px;
     white-space: pre-wrap;
