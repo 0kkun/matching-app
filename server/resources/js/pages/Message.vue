@@ -21,7 +21,7 @@
 
             <!-- メッセージ表示 -->
             <div class="col-sm-7 bg-white border rounded mt-3">
-                <div class="message-box-aria">
+                <div class="message-box-aria" id="message-box-aria">
                     <div v-for="(mes, index) in showMessage" :key="`second-${index}`">
                         <div v-if="mes.send_user_id!=loginUserId" class="d-flex" style="clear:both;">
                             <div class="name">{{ mes.name }}</div>
@@ -37,9 +37,9 @@
 
 
                 <div class="input-group pb-3">
-                    <input type="text" class="form-control" placeholder="Input message..." aria-label="Input message..." aria-describedby="button-addon">
+                    <input type="text" v-model="inputMessage" class="form-control" placeholder="Input message..." aria-label="Input message..." aria-describedby="button-addon">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button">
+                        <button @click.prevent="sendMessage()" class="btn btn-outline-secondary" type="button">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -52,6 +52,9 @@
 <script>
 import SideBar from '../components/SideBar.vue'
 
+// メッセ送信後にスクロールさせるタイマー
+const MessageTimeOut = 100;
+
 export default {
     components: {
         SideBar,
@@ -62,8 +65,8 @@ export default {
             messages: {},
             showMessage: {},
             messageFocusUserId: '',
+            inputMessage: '',
             loginUserId: '',
-            loadStatus: false,
             showContent: false,
             modalArg: '',
         }
@@ -78,12 +81,11 @@ export default {
                 this.users = Object.values(response.data.data.users);
                 this.messages = Object.values(response.data.data.messages);
                 this.loginUserId = response.data.data.login_user_id;
-                this.messageFocusUserId = this.users[0].id;
+                // もし表示ユーザーが選択されていなければ初期は一番上のユーザーを選択
+                if ( this.messageFocusUserId == '' ) {
+                    this.messageFocusUserId = this.users[0].id;
+                }
                 this.messageFocus(this.messageFocusUserId);
-                this.loadStatus = true;
-                console.log(this.users);
-                console.log(this.loginUserId);
-                console.log(this.messages);
             })
             .catch((error) => {
                 console.log(error);
@@ -93,10 +95,32 @@ export default {
             this.messageFocusUserId = userId;
             this.showMessage = this.messages;
             this.showMessage = this.showMessage.filter((mes) => {
-                return mes.send_user_id == userId || mes.send_user_id == this.loginUserId;
+                return mes.send_user_id == userId || mes.send_user_id == this.loginUserId && mes.receive_user_id == userId;
             },this);
+            // NOTE: タイムアウトを設定しないとスクロールされない
+            setTimeout(this.scrollMoveBottom, MessageTimeOut);
+        },
+        sendMessage() {
+            axios.post('/api/v1/message/create', {
+                send_user_id: this.loginUserId,
+                receive_user_id: this.messageFocusUserId,
+                message: this.inputMessage,
+            })
+            .then((response) => {
+                this.inputMessage = '';
+                this.fetchMatchedUsersList();
+                this.messageFocus(this.messageFocusUserId);
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        scrollMoveBottom() {
+            const obj = document.getElementById('message-box-aria');
+            obj.scrollTop = obj.scrollHeight;
         }
-    }
+    },
 }
 </script>
 
@@ -104,6 +128,7 @@ export default {
 .name {
     margin: 1.8em 0;
     padding: 8px 10px;
+    white-space: nowrap;
     cursor: pointer;
 }
 .message {
