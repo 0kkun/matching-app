@@ -72,19 +72,45 @@ class ProfileService implements ProfileServiceInterface
      */
     public function fetchAllUsersWithProfile(bool $likes_mode): Collection
     {
-        $users = $this->user_repository->fetchAllWithProfile();
         $login_user_id = Auth::id();
 
+        $users = $this->user_repository->fetchAllWithProfile();
+
+        // ログインユーザーは一覧に表示しないので除外
         $users = $this->rejectLoginUser($users, $login_user_id);
 
         $users = $this->addKeyForLoginUserAlreadyLiked($users, $login_user_id);
 
         if ($likes_mode) {
             $users = $this->fillterOnlyLikeRequestToLoginUser($users, $login_user_id);
+        } else {
+            // マッチ済ユーザーは表示しないので除外
+            $users = $this->rejectMatchedUser($users, $login_user_id);
         }
 
         $users = $this->transformReturnValue($users);
 
+        return $users;
+    }
+
+    /**
+     * ログインユーザーとマッチ済のユーザーを除外する
+     *
+     * @return void
+     */
+    public function rejectMatchedUser(Collection $users, int $login_user_id): Collection
+    {
+        $matched_user_ids = $this->like_repository
+            ->fetchMatchedLikes($login_user_id)
+            ->pluck('request_user_id');
+
+        if (!empty($matched_user_ids)) {
+            foreach ( $matched_user_ids as $matched_user_id ) {
+                $users = $users->reject(function($user) use ($matched_user_id) {
+                    return $user['id'] === $matched_user_id;
+                });
+            }
+        }
         return $users;
     }
 
@@ -109,7 +135,6 @@ class ProfileService implements ProfileServiceInterface
 
         return $users;
     }
-
 
     /**
      * ログイン中のユーザーは一覧から除外する
