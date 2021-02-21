@@ -37,7 +37,7 @@
 
 
                 <div class="input-group pb-3">
-                    <input type="text" v-model="inputMessage" class="form-control" placeholder="Input message..." aria-label="Input message..." aria-describedby="button-addon">
+                    <textarea v-model="inputMessage" maxLength="400" cols="" rows="2" wrap="hard" class="form-control input-textarea" placeholder="Input message..."></textarea>
                     <div class="input-group-append">
                         <button @click.prevent="sendMessage()" class="btn btn-outline-secondary" type="button">
                             <i class="fas fa-paper-plane"></i>
@@ -92,6 +92,7 @@ export default {
             });
         },
         messageFocus(userId) {
+            this.inputMessage = '';
             this.messageFocusUserId = userId;
             this.showMessage = this.messages;
             this.showMessage = this.showMessage.filter((mes) => {
@@ -140,6 +141,8 @@ export default {
     font-size: 16px;
     background: #e0edff;
     border-radius: 15px;
+    white-space: pre-wrap;
+    word-wrap:break-word;
 }
 .message-box-aria {
     height: 70vh;
@@ -157,5 +160,8 @@ ul {
 }
 .active {
     background-color: rgb(154, 237, 192);
+}
+.input-textarea {
+    max-height: 200px;
 }
 </style>
