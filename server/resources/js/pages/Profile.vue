@@ -126,8 +126,8 @@ export default {
         this.getLoginUserProfile();
     },
     methods: {
-        getLoginUserProfile() {
-            axios.get('/api/v1/profile/login_user')
+        async getLoginUserProfile() {
+            await axios.get('/api/v1/profile/login_user')
             .then((response) => {
                 this.user = response.data.data.login_user[0];
                 this.prefLists = response.data.data.pref_lists;
@@ -154,11 +154,11 @@ export default {
             this.imageName = '';
             console.log('canceled');
         },
-        updateProfile() {
+        async updateProfile() {
             if  (this.imageName == '') {
                 this.imageName = this.user.image_name;
             }
-            axios.post('/api/v1/profile/update', {
+            await axios.post('/api/v1/profile/update', {
                 user: {
                     name: this.user.name,
                     prefecture_id: this.user.prefecture_id,
@@ -185,7 +185,7 @@ export default {
             if (this.file != '') {
                 const formData = new FormData();
                 formData.append('file', this.file);
-                axios.post('/api/v1/profile/image_upload', formData)
+                await axios.post('/api/v1/profile/image_upload', formData)
                 .then((response) => {
                     console.log('image uploaded!');
                 })

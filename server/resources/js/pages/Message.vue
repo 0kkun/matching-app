@@ -75,8 +75,8 @@ export default {
         this.fetchMatchedUsersList();
     },
     methods: {
-        fetchMatchedUsersList() {
-            axios.get('/api/v1/message/fetch_matched_users_list')
+        async fetchMatchedUsersList() {
+            await axios.get('/api/v1/message/fetch_matched_users_list')
             .then((response) => {
                 this.users = Object.values(response.data.data.users);
                 this.messages = Object.values(response.data.data.messages);
@@ -101,8 +101,8 @@ export default {
             // NOTE: タイムアウトを設定しないとスクロールされない
             setTimeout(this.scrollMoveBottom, MessageTimeOut);
         },
-        sendMessage() {
-            axios.post('/api/v1/message/create', {
+        async sendMessage() {
+            await axios.post('/api/v1/message/create', {
                 send_user_id: this.loginUserId,
                 receive_user_id: this.messageFocusUserId,
                 message: this.inputMessage,

@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Repositories\Contracts\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Services\Profile\ProfileServiceInterface;
+use Illuminate\Support\Facades\Auth;
 
 class SearchController extends Controller
 {
-    private $user_repository;
     private $profile_service;
+
+    protected $result_status;
+    protected $response;
+    protected $messages;
 
     /**
      * Constructor
@@ -20,12 +23,13 @@ class SearchController extends Controller
      * @param UserRepository $user_repository
      */
     public function __construct(
-        UserRepository $user_repository,
         ProfileServiceInterface $profile_service
     )
     {
         $this->pref_lists = config('pref');
-        $this->user_repository = $user_repository;
+        $this->result_status = config('api_template.result_status');
+        $this->response = config('api_template.response_format');
+        $this->messages = config('api_template.messages');
         $this->profile_service = $profile_service;
     }
 
@@ -42,20 +46,27 @@ class SearchController extends Controller
     {
         try {
             Log::info("[START] " . __FUNCTION__ );
-            $status = 200;
-            $likes_mode = false;
 
-            // プロフ付きのユーザー情報を全件取得
-            $users = $this->profile_service->fetchAllUsersWithProfile($likes_mode);
+            if (Auth::check()) {
+                $status = $this->result_status['success'];
+                $likes_mode = false;
 
-            $data = [
-                'users' => $users,
-                'pref_lists' => $this->pref_lists
-            ];
+                // プロフ付きのユーザー情報を全件取得
+                $users = $this->profile_service->fetchAllUsersWithProfile($likes_mode);
 
-            $response = [
+                $data = [
+                    'users'      => $users,
+                    'pref_lists' => $this->pref_lists
+                ];
+
+            } else {
+                $status = $this->result_status['unauthorized'];
+                $data = '';
+            }
+
+            $this->response = [
                 'status'  => $status,
-                'message' => '',
+                'message' => $this->messages[$status],
                 'data'    => $data,
             ];
 
@@ -63,12 +74,13 @@ class SearchController extends Controller
 
         } catch (\Exception $e) {
             Log::info("[Exception]" . __FUNCTION__ . $e->getMessage());
-            $status = 500;
-            $response = [
-                'status' => $status,
+            $status = $this->result_status['server_error'];;
+            $this->response = [
+                'status'  => $status,
                 'message' => $e->getMessage(),
+                'data'    => '',
             ];
         }
-        return response()->json($response);
+        return response()->json($this->response);
     }
 }

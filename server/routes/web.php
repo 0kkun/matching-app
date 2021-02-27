@@ -21,7 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home.index')->middleware('aut
 
 Route::get('/home/{any?}', function() {
     return view('home.index');
-})->where('any', '.*');
+})->where('any', '.*')->middleware('auth:web');
 
 // *******************
 // *** API用のルート ***
