@@ -160,8 +160,8 @@ export default {
         this.fetchUsersList();
     },
     methods: {
-        fetchUsersList() {
-            axios.get('/api/v1/search/fetch_users_list')
+        async fetchUsersList() {
+            await axios.get('/api/v1/search/fetch_users_list')
             .then((response) => {
                 this.users = Object.values(response.data.data.users);
                 this.prefLists = response.data.data.pref_lists;
@@ -239,8 +239,8 @@ export default {
             this.checkLikeSort = '';
             this.searchMode = false;
         },
-        likeRequest(receiveUserId) {
-            axios.post('/api/v1/like/create',{
+        async likeRequest(receiveUserId) {
+            await axios.post('/api/v1/like/create',{
                 receive_user_id: receiveUserId
             })
             .then((response) => {
