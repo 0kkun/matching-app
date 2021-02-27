@@ -60,8 +60,8 @@ export default {
         this.fetchUsersForLikeRequested();
     },
     methods: {
-        fetchUsersForLikeRequested() {
-            axios.get('/api/v1/like/fetch_users_list')
+        async fetchUsersForLikeRequested() {
+            await axios.get('/api/v1/like/fetch_users_list')
             .then((response) => {
                 this.users = Object.values(response.data.data);
                 this.loadStatus = true;
@@ -71,8 +71,8 @@ export default {
                 console.log(error);
             });
         },
-        likeRequest(receiveUserId) {
-            axios.post('/api/v1/like/create',{
+        async likeRequest(receiveUserId) {
+            await axios.post('/api/v1/like/create',{
                 receive_user_id: receiveUserId
             })
             .then((response) => {
