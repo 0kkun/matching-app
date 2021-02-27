@@ -10,3 +10,8 @@
 - Laravel 6.20.0
 - MySQL 5.7
 - Ngin X 1.18
+
+## デプロイ先
+
+- Heroku
+> http://matching-service-app.herokuapp.com
