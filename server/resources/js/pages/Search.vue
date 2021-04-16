@@ -79,7 +79,7 @@
                                     <img @click="openModal(user)" class="card-img-top search-card-image" src="/images/default/no_image.png">
                                 </div>
                                 <div v-else class="text-center card-image-area">
-                                    <img @click="openModal(user)" class="card-img-top search-card-image" :src="'/images/uploads/' + user.image_name">
+                                    <img @click="openModal(user)" class="card-img-top search-card-image" :src="'/images/uploads/' + user.image_name" onerror="this.src='/images/default/no_image.png'">
                                 </div>
                                 <div class="card-body d-flex justify-content-between">
                                     <div>
@@ -105,7 +105,7 @@
                                     <img @click="openModal(user)" class="card-img-top search-card-image" src="/images/default/no_image.png">
                                 </div>
                                 <div v-else class="text-center card-image-area">
-                                    <img @click="openModal(user)" class="card-img-top search-card-image" :src="'/images/uploads/' + user.image_name">
+                                    <img @click="openModal(user)" class="card-img-top search-card-image" :src="'/images/uploads/' + user.image_name" onerror="this.src='/images/default/no_image.png'">
                                 </div>
                                 <div class="card-body p-2 d-flex justify-content-between">
                                     <div>

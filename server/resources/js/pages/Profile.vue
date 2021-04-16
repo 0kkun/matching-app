@@ -11,7 +11,7 @@
                     <div class="card mt-3">
                         <div class="text-center">
                             <img v-if="user.image_name=='no_image.png'" class="mt-3 preview-image" :src="'/images/default/no_image.png'">
-                            <img v-else class="mt-3 preview-image" :src="'/images/uploads/' + user.image_name">
+                            <img v-else class="mt-3 preview-image" :src="'/images/uploads/' + user.image_name" onerror="this.src='/images/default/no_image.png'">
                         </div>
                         <div class="h3 text-center pt-2">{{ user.name }}</div>
                     </div>
