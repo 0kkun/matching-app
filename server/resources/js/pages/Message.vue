@@ -72,6 +72,7 @@ export default {
         }
     },
     mounted() {
+        // 5秒ごとにデータを更新する
         this.fetchMatchedUsersList();
     },
     methods: {
@@ -98,6 +99,13 @@ export default {
             this.showMessage = this.showMessage.filter((mes) => {
                 return mes.send_user_id == userId || mes.send_user_id == this.loginUserId && mes.receive_user_id == userId;
             },this);
+            this.showMessage = this.showMessage.sort(function(a, b) {
+                if (a.created_at < b.created_at) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            });
             // NOTE: タイムアウトを設定しないとスクロールされない
             setTimeout(this.scrollMoveBottom, MessageTimeOut);
         },
@@ -111,7 +119,6 @@ export default {
                 this.inputMessage = '';
                 this.fetchMatchedUsersList();
                 this.messageFocus(this.messageFocusUserId);
-                console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);
