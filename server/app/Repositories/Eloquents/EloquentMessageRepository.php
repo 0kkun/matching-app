@@ -50,6 +50,7 @@ class EloquentMessageRepository implements MessageRepository
             ->where('send_user_id', $login_user_id)
             ->orWhere('receive_user_id', $login_user_id)
             ->join('users','users.id','=','messages.send_user_id')
+            ->select('users.id', 'users.name', 'messages.message', 'send_user_id', 'receive_user_id', 'messages.created_at')
             ->get();
     }
 }

@@ -35,6 +35,8 @@ class MessageController extends Controller
 
     /**
      * マッチ中のユーザー情報とプロフ、メッセージを取得するAPI
+     * 
+     * /api/v1/message/fetch_matched_users_list
      *
      * @param Request $request
      * @return JsonResponse
